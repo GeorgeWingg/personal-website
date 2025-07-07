@@ -35,6 +35,7 @@ const config: Config = {
         'glow-pulse': 'glow-pulse 1s ease-in-out infinite',
         'slide-in': 'slide-in 300ms cubic-bezier(0.4, 0, 0.2, 1)',
         'fade-in': 'fade-in 150ms ease-in',
+        'spin-slow': 'spin 3s linear infinite',
       },
       keyframes: {
         'glow-pulse': {

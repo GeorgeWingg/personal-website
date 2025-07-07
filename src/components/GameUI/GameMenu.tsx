@@ -64,55 +64,27 @@ export default function GameMenu({ activeOption, onSelectOption }: GameMenuProps
               onClick={() => onSelectOption(item.id)}
               onMouseEnter={() => setHoveredItem(item.id)}
               onMouseLeave={() => setHoveredItem(null)}
-              className="relative w-full text-left p-4 rounded-lg transition-all duration-200 focus:outline-none"
+              className={`relative w-full text-left p-4 rounded-lg transition-all duration-200 ${
+                isActive ? 'outline outline-2 outline-white' : ''
+              }`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              {/* Background glow for active item */}
-              {isActive && (
-                <motion.div
-                  key={`active-${item.id}`}
-                  className="absolute inset-0 bg-game-green/20 rounded-lg border border-game-green/30"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                />
-              )}
+              {/* Background glow for active item - removed per user request */}
               
-              {/* Hover glow */}
-              {isHovered && !isActive && (
-                <motion.div
-                  className="absolute inset-0 bg-game-green/10 rounded-lg"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                />
-              )}
+              {/* Hover glow - removed per user request */}
               
               {/* Content */}
               <div className="relative z-10">
-                <h3 className={`font-orbitron font-bold text-lg mb-1 transition-colors ${
-                  isActive ? 'text-game-green' : 'text-white'
-                }`}>
+                <h3 className="font-orbitron font-bold text-lg mb-1 transition-colors text-white">
                   {item.label}
                 </h3>
-                <p className={`text-sm transition-colors ${
-                  isActive ? 'text-game-green/80' : 'text-game-text'
-                }`}>
+                <p className="text-sm transition-colors text-game-text">
                   {item.description}
                 </p>
               </div>
               
-              {/* Selection indicator */}
-              {isActive && (
-                <motion.div
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-game-green rounded-r"
-                  initial={{ scaleY: 0 }}
-                  animate={{ scaleY: 1 }}
-                  transition={{ duration: 0.2 }}
-                />
-              )}
+              {/* Selection indicator - removed per user request */}
             </motion.button>
           );
         })}
