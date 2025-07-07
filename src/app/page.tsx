@@ -1,73 +1,77 @@
-import ProjectCard from "@/components/ProjectCard";
+'use client';
 
-const projects = [
-  {
-    title: "Personal Website",
-    description: "This site. Built with Next.js and Tailwind CSS.",
-    status: "WIP",
-  },
-  {
-    title: "Goals App",
-    description: "Small task tracking experiment.",
-    status: "Concept",
-  },
-  {
-    title: "AI Workflows",
-    description: "Exploring AI-native leverage systems.",
-    status: "WIP",
-  },
-];
+import { useState, useEffect } from 'react';
+import GameFrame from '@/components/GameUI/GameFrame';
+import GameMenu, { MenuOption } from '@/components/GameUI/GameMenu';
+import ContentPanel from '@/components/GameUI/ContentPanel';
+import LinkDock from '@/components/GameUI/LinkDock';
+import AboutPanel from '@/components/Panels/AboutPanel';
+import ProjectsPanel from '@/components/Panels/ProjectsPanel';
+import NowPanel from '@/components/Panels/NowPanel';
+import MusicPanel from '@/components/Panels/MusicPanel';
+import ContactPanel from '@/components/Panels/ContactPanel';
 
 export default function Home() {
+  const [activeOption, setActiveOption] = useState<MenuOption>('about');
+  
+  // Sync with URL hash
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1) as MenuOption;
+      if (hash && ['about', 'projects', 'now', 'music', 'contact'].includes(hash)) {
+        setActiveOption(hash);
+      }
+    };
+    
+    // Check initial hash
+    handleHashChange();
+    
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const renderPanel = () => {
+    switch (activeOption) {
+      case 'about':
+        return <AboutPanel />;
+      case 'projects':
+        return <ProjectsPanel />;
+      case 'now':
+        return <NowPanel />;
+      case 'music':
+        return <MusicPanel />;
+      case 'contact':
+        return <ContactPanel />;
+      default:
+        return <AboutPanel />;
+    }
+  };
+
+  // Handle menu selection with URL update
+  const handleMenuSelect = (option: MenuOption) => {
+    setActiveOption(option);
+    window.location.hash = option;
+  };
+
   return (
-    <div className="mx-auto max-w-2xl py-16 space-y-20 font-sans">
-      <header className="text-center space-y-2">
-        <h1 className="text-4xl font-bold">George</h1>
-        <p className="text-lg text-gray-500 dark:text-gray-400">
-          Building tiny web toys & exploring AI-native systems.
-        </p>
-      </header>
-
-      <section id="about" className="space-y-4">
-        <h2 className="text-2xl font-semibold">About</h2>
-        <p>
-          I’m a developer who enjoys crafting fast and expressive web
-          experiences. Currently experimenting with leverage through AI-native
-          systems.
-        </p>
-      </section>
-
-      <section id="projects" className="space-y-4">
-        <h2 className="text-2xl font-semibold">Projects</h2>
-        <div className="space-y-4">
-          {projects.map((project) => (
-            <ProjectCard key={project.title} {...project} />
-          ))}
+    <GameFrame>
+      <div className="h-full flex relative">
+        {/* Menu - 1/4 width */}
+        <div className="w-1/4 min-w-[250px] h-full">
+          <GameMenu activeOption={activeOption} onSelectOption={handleMenuSelect} />
         </div>
-      </section>
-
-      <section id="music" className="space-y-4">
-        <h2 className="text-2xl font-semibold">Music Taste</h2>
-        <p>
-          Favourite artists: Radiohead, Autechre, Tame Impala… (dynamic charts
-          coming soon!)
-        </p>
-      </section>
-
-      <footer className="pt-8 border-t text-center">
-        <a
-          href="mailto:hi@example.com"
-          className="hover:underline mr-4"
-        >
-          Email
-        </a>
-        <a
-          href="https://github.com/example"
-          className="hover:underline"
-        >
-          GitHub
-        </a>
-      </footer>
-    </div>
+        
+        {/* Content - 3/4 width */}
+        <div className="flex-1 h-full p-6 pb-20">
+          <ContentPanel isActive={true}>
+            {renderPanel()}
+          </ContentPanel>
+        </div>
+        
+        {/* Link Dock */}
+        <LinkDock />
+      </div>
+    </GameFrame>
   );
 }

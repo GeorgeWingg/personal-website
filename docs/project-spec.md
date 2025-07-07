@@ -1,78 +1,89 @@
-📘 Personal Website — Project Spec (v1.0)
+📘 Personal Website — Project Spec (v2.0)
 
 🧭 Purpose
 
-To create a clean, fast, and expressive personal website that:
-	•	Showcases who I am and what I’m building
-	•	Has some unique visual flair / aesthetic identity
-	•	Sets the foundation for dynamic data viz (e.g. music taste from Last.fm)
-	•	Reflects my technical style and ambition (not a cookie-cutter dev portfolio)
+To create an immersive, game menu-inspired personal website that:
+	•	Establishes personal brand and identity (not portfolio-first)
+	•	Feels like navigating a console game interface (PS2/Xbox dashboard style)
+	•	Has unique retro-futurism aesthetic with functional UI elements
+	•	Sets foundation for dynamic modules (music viz, goals, etc.) within the menu system
+	•	Makes all key links and navigation immediately accessible
 
 ⸻
 
 🧩 Core Features (MVP)
 
-✅ 1. Homepage
-	•	Name + title tagline
-	•	Aesthetic layout (dark theme, big type, centered or grid-based)
-	•	Vibes immediately
+✅ 1. Main Menu System
+	•	Console-style navigation menu (like game main menu)
+	•	Large selectable options: About, Projects, Now, Contact
+	•	Active selection indicator (LED/glow effect)
+	•	Smooth transitions between menu sections
 
-✅ 2. About Section
-	•	Who I am
+✅ 2. About Module
+	•	Personal narrative focused on identity and ambitions
 	•	What I care about (leverage, AI-native systems, etc.)
-	•	Short and personal — not corporate CV
+	•	Presented as a game menu panel/window
 
-✅ 3. Projects Section
-	•	2–3 projects or ideas with cards
+✅ 3. Projects Module
+	•	Accessed through menu navigation
+	•	2–3 projects displayed as interactive cards
 	•	Each card: title, blurb, status (WIP, shipped, concept), and optional link
-	•	Add a “view all” later if needed
+	•	Styled like game UI elements or synth controls
 
-✅ 4. Music Taste Section (Placeholder)
-	•	Title + placeholder text or hardcoded list of fav artists
-	•	In future: fetch from Last.fm → JSON → render charts / covers
-	•	Keep this in mind in file structure (e.g. /components/music/ folder now)
+✅ 4. Music Module (Placeholder)
+	•	Placeholder for future Last.fm integration
+	•	Hardcoded list of favorite artists for now
+	•	Prepare structure for future visualizations
+	•	Styled as audio/media control panel
 
-✅ 5. Contact / Links
-	•	Email, GitHub, maybe X
-	•	Subtle footer or in nav
+✅ 5. Global Link Dock
+	•	Always-visible row of icon links (GitHub, X, Email)
+	•	Bottom dock or integrated into frame
+	•	Immediate access without navigation
 
 ⸻
 
 🎨 Design Direction
-	•	Dark theme, slightly cyber/academic
-	•	Tailwind for styling
-	•	Optionally: subtle animation (Framer Motion), hover effects, maybe a custom font
-	•	Minimal but expressive: not too flashy, but not boilerplate
+	•	Retro-futurism game UI (PS2/Xbox era menus)
+	•	Dark base with neon/LED accents (green, blue, red)
+	•	Depth through shadows, gradients, and bevels
+	•	Panel-based layout with gloss/glass effects
+	•	Motion design for menu navigation and hover states
+	•	NOT: CRT effects, vaporwave, or overly minimal
 
 ⸻
 
 🔧 Tech Stack
 
-Layer	Tool
-Framework	Next.js (App Router)
-Lang	TypeScript
-Styling	Tailwind CSS
-Hosting	Vercel
-Icons	Lucide (optional)
-Animations	Framer Motion (optional)
-Fonts	JetBrains Mono / Inter / custom vibe font
-Music data	Last.fm API (future)
+Layer	Tool	Notes
+Framework	Next.js (App Router)	Existing setup
+Lang	TypeScript	Type safety
+Styling	Tailwind CSS	May need custom CSS for advanced effects
+3D/WebGL	React Three Fiber	Optional for true 3D menu effects
+Hosting	Vercel	Fast deployment
+Icons	Lucide / Custom SVGs	Game-style icons
+Animations	Framer Motion	Menu transitions & hover states
+Fonts	Orbitron / Eurostile	Retro-futuristic feel
+Music data	Last.fm API	Future integration
 
 
 ⸻
 
 🔮 Future Ideas
-	•	Add Last.fm fetch script (every week) → store JSON → render graph w/ Chart.js or D3
-	•	Build a /music route for public listening stats
-	•	Add agent-powered “Ask Me Anything” box with LLM
-	•	Integrate goals/tasks section from your “goals app” idea as a widget
+	•	Add Last.fm real-time data with visualizations
+	•	3D menu navigation using React Three Fiber
+	•	Sound effects for menu navigation (optional)
+	•	Dynamic background effects (particles, grid)
+	•	Terminal mode for power users
+	•	Achievement system for site exploration
 
 ⸻
 
 🛣️ Milestone Plan
 
 Milestone	Description
-v0.1	Homepage, About, Projects, deploy to Vercel
-v0.2	Add music placeholder + nice layout
-v0.3	Wire up static Last.fm data and render one chart
-v0.4+	Add visual polish, maybe domain, maybe blog section, maybe goal tracking
+v0.1	Basic site with sections, deploy to Vercel
+v0.2	Game menu navigation system implemented
+v0.3	Full retro-futurism styling and animations
+v0.4	Music data integration + visualizations
+v0.5	3D effects and advanced interactions
