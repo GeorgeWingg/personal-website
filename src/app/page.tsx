@@ -16,7 +16,6 @@ type FocusArea = 'menu' | 'content';
 export default function Home() {
   const [activeOption, setActiveOption] = useState<MenuOption>('about');
   const [focusArea, setFocusArea] = useState<FocusArea>('menu');
-  const [contentFocusIndex, setContentFocusIndex] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
   
   // Sync with URL hash
@@ -45,7 +44,7 @@ export default function Home() {
       case 'projects':
         return <ProjectsPanel isActive={isContentActive} />;
       case 'now':
-        return <NowPanel isActive={isContentActive} />;
+        return <NowPanel />;
       case 'music':
         return <MusicPanel isActive={isContentActive} />;
       case 'contact':
@@ -59,7 +58,6 @@ export default function Home() {
   const handleMenuSelect = (option: MenuOption) => {
     setActiveOption(option);
     window.location.hash = option;
-    setContentFocusIndex(0); // Reset content focus when changing panels
   };
 
   // Global keyboard navigation

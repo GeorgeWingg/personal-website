@@ -64,15 +64,19 @@ export default function AboutPanel({ isActive = false }: AboutPanelProps) {
         className="space-y-6"
       >
         <p className="text-lg leading-relaxed text-game-text">
-          Hey, I&apos;m George – a builder obsessed with leverage, AI-native systems and
-          thoughtful product design. I&apos;ve spent the last few years shipping tools
-          that help people move faster by collaborating with machines.
+          Hi, I&apos;m George. Currently thinking about and building the best ways to scale intelligence.
         </p>
         
         <p className="text-lg leading-relaxed text-game-text">
-          Currently in London, working on AI agents and thinking about the future.
-          When I&apos;m not coding, you&apos;ll find me exploring new music or scribbling 
-          product ideas in a notebook.
+          Previously worked as a Data Engineer in Finance. Agents are the most interesting thing to me at the moment.
+        </p>
+        
+        <p className="text-lg leading-relaxed text-game-text">
+          Looking to spend the short time we have pre-superintelligence working on things I find interesting and building leverage.
+        </p>
+        
+        <p className="text-lg leading-relaxed text-game-text">
+          Currently in London, but also spending time in San Francisco and the Isle of Man.
         </p>
         
         <div className="mt-8 p-6 bg-game-dark rounded-lg border border-game-border">

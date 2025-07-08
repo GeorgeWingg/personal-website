@@ -103,7 +103,7 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
           {genresLoading && genres.length === 0 ? (
             <GenreChartSkeleton />
           ) : genres.length > 0 ? (
-            <GenreDonutChart genres={genres} maxGenres={8} />
+            <GenreDonutChart genres={genres} artists={artists} maxGenres={8} />
           ) : (
             <div className="text-game-text">
               <p>Genre analysis temporarily unavailable</p>
