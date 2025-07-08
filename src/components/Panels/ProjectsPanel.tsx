@@ -3,10 +3,17 @@
 import { motion } from 'framer-motion';
 import { projects } from '@/data/projects';
 import GameCard from '@/components/UI/GameCard';
+import { useContentNavigation } from '@/hooks/useContentNavigation';
 
-export default function ProjectsPanel() {
+interface ProjectsPanelProps {
+  isActive?: boolean;
+}
+
+export default function ProjectsPanel({ isActive = false }: ProjectsPanelProps) {
+  const { containerRef } = useContentNavigation({ isActive });
+  
   return (
-    <div className="max-w-4xl">
+    <div ref={containerRef} className="max-w-4xl">
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

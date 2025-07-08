@@ -16,13 +16,20 @@ import NowPlayingCompact from '@/components/MusicVisualization/NowPlayingCompact
 import GenreDonutChart from '@/components/MusicVisualization/GenreDonutChart';
 import GenreChartSkeleton from '@/components/MusicVisualization/GenreChartSkeleton';
 import TimePeriodSelector from '@/components/MusicVisualization/TimePeriodSelector';
+import { useContentNavigation } from '@/hooks/useContentNavigation';
 
-export default function MusicPanel() {
+interface MusicPanelProps {
+  isActive?: boolean;
+}
+
+export default function MusicPanel({ isActive = false }: MusicPanelProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<LastfmPeriod>('1month');
   const { nowPlaying } = useRecentTracks();
   const { artists, loading: artistsLoading } = useTopArtists(selectedPeriod, 50);
   const { tracks: lovedTracks, loading: lovedLoading } = useLovedTracks(6);
   const { genres, loading: genresLoading } = useGenreAnalysis(selectedPeriod);
+  
+  const { containerRef } = useContentNavigation({ isActive });
 
   // Pre-warm cache for adjacent periods
   useEffect(() => {
@@ -53,7 +60,7 @@ export default function MusicPanel() {
 
 
   return (
-    <div className="max-w-6xl">
+    <div ref={containerRef} className="max-w-6xl">
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -165,8 +172,16 @@ export default function MusicPanel() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-game-dark rounded-lg border border-game-border p-6 hover:border-game-green/50 transition-all cursor-pointer group"
+          className="bg-game-dark rounded-lg border border-game-border p-6 hover:border-game-green/50 transition-all cursor-pointer group game-focus"
           onClick={() => window.open('https://www.last.fm/user/GeorgeWing', '_blank')}
+          tabIndex={0}
+          role="link"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              window.open('https://www.last.fm/user/GeorgeWing', '_blank');
+            }
+          }}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

@@ -3,6 +3,10 @@
 import { motion } from 'framer-motion';
 import { Code, BookOpen, Dumbbell, Headphones } from 'lucide-react';
 
+interface NowPanelProps {
+  isActive?: boolean;
+}
+
 interface NowItem {
   category: string;
   icon: React.ReactNode;
@@ -32,7 +36,7 @@ const nowData: NowItem[] = [
   },
 ];
 
-export default function NowPanel() {
+export default function NowPanel({ isActive = false }: NowPanelProps) {
   return (
     <div className="max-w-3xl">
       <motion.h2

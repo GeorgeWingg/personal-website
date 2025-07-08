@@ -41,13 +41,14 @@ export default function TimePeriodSelector({ selectedPeriod, onPeriodChange }: T
             <motion.button
               key={period.value}
               onClick={() => onPeriodChange(period.value)}
-              className={`relative px-4 py-2 text-xs font-mono rounded-lg transition-all ${
+              className={`relative px-4 py-2 text-xs font-mono rounded-lg transition-all game-focus ${
                 selectedPeriod === period.value
                   ? 'text-black font-bold'
                   : 'text-game-text hover:text-white hover:bg-game-border'
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              tabIndex={0}
             >
               {selectedPeriod === period.value && (
                 <motion.div

@@ -35,7 +35,7 @@ export default function GameCard({ project }: GameCardProps) {
       whileTap={{ scale: 0.98 }}
       className="relative h-full"
     >
-      <div className="h-full p-6 bg-game-panel-gradient rounded-lg border border-game-border shadow-game-panel hover:border-game-green/50 hover:shadow-game-glow transition-all duration-300 group">
+      <div className="h-full p-6 bg-game-panel-gradient rounded-lg border border-game-border shadow-game-panel hover:border-game-green/50 hover:shadow-game-glow transition-all duration-300 group game-focus">
         {/* Gloss overlay */}
         <div className="absolute inset-0 bg-game-gloss rounded-lg pointer-events-none" />
         

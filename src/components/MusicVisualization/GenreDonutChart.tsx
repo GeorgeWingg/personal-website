@@ -1,11 +1,109 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 
 interface GenreData {
   name: string;
   count: number;
+}
+
+interface TooltipPosition {
+  x: number;
+  y: number;
+  placement: 'top' | 'bottom' | 'left' | 'right';
+}
+
+interface TooltipDimensions {
+  width: number;
+  height: number;
+}
+
+// Custom hook for tooltip measurement and positioning
+function useTooltipPositioning() {
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [tooltipDimensions, setTooltipDimensions] = useState<TooltipDimensions | null>(null);
+
+  const measureTooltip = useCallback(() => {
+    if (tooltipRef.current) {
+      const rect = tooltipRef.current.getBoundingClientRect();
+      setTooltipDimensions({ width: rect.width, height: rect.height });
+    }
+  }, []);
+
+  const calculatePosition = useCallback((
+    anchorX: number,
+    anchorY: number,
+    containerRect: DOMRect,
+    tooltipDims: TooltipDimensions,
+    preferredPlacement: 'top' | 'bottom' | 'left' | 'right' = 'top'
+  ): TooltipPosition => {
+    const padding = 8; // Padding from edges
+    const gap = 4; // Gap between anchor and tooltip (reduced since we already offset from donut)
+    
+    // Try placements in order of preference
+    const placements: Array<{ placement: TooltipPosition['placement'], x: number, y: number }> = [
+      {
+        placement: preferredPlacement,
+        x: preferredPlacement === 'left' ? anchorX - tooltipDims.width - gap :
+           preferredPlacement === 'right' ? anchorX + gap :
+           anchorX - tooltipDims.width / 2,
+        y: preferredPlacement === 'top' ? anchorY - tooltipDims.height - gap :
+           preferredPlacement === 'bottom' ? anchorY + gap :
+           anchorY - tooltipDims.height / 2
+      },
+      // Fallback placements
+      {
+        placement: 'top',
+        x: anchorX - tooltipDims.width / 2,
+        y: anchorY - tooltipDims.height - gap
+      },
+      {
+        placement: 'bottom',
+        x: anchorX - tooltipDims.width / 2,
+        y: anchorY + gap
+      },
+      {
+        placement: 'right',
+        x: anchorX + gap,
+        y: anchorY - tooltipDims.height / 2
+      },
+      {
+        placement: 'left',
+        x: anchorX - tooltipDims.width - gap,
+        y: anchorY - tooltipDims.height / 2
+      }
+    ];
+
+    // Check each placement for collision with container bounds
+    for (const placement of placements) {
+      const wouldFitHorizontally = placement.x >= padding && 
+                                   placement.x + tooltipDims.width <= containerRect.width - padding;
+      const wouldFitVertically = placement.y >= padding && 
+                                 placement.y + tooltipDims.height <= containerRect.height - padding;
+      
+      if (wouldFitHorizontally && wouldFitVertically) {
+        return placement;
+      }
+    }
+
+    // If nothing fits perfectly, return the preferred placement clamped to bounds
+    const fallback = placements[0];
+    return {
+      placement: fallback.placement,
+      x: Math.max(padding, Math.min(fallback.x, containerRect.width - tooltipDims.width - padding)),
+      y: Math.max(padding, Math.min(fallback.y, containerRect.height - tooltipDims.height - padding))
+    };
+  }, []);
+
+  return {
+    tooltipRef,
+    containerRef,
+    tooltipDimensions,
+    measureTooltip,
+    calculatePosition
+  };
 }
 
 interface GenreDonutChartProps {
@@ -15,6 +113,15 @@ interface GenreDonutChartProps {
 
 export default function GenreDonutChart({ genres, maxGenres = 8 }: GenreDonutChartProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState<TooltipPosition | null>(null);
+  const {
+    tooltipRef,
+    containerRef,
+    tooltipDimensions,
+    measureTooltip,
+    calculatePosition
+  } = useTooltipPositioning();
+  const svgRef = useRef<SVGSVGElement>(null);
   
   // Helper function to create Last.fm tag URL
   const getLastFmTagUrl = (genreName: string): string => {
@@ -48,14 +155,188 @@ export default function GenreDonutChart({ genres, maxGenres = 8 }: GenreDonutCha
     return { segments, total };
   }, [genres, maxGenres]);
 
-  if (chartData.segments.length === 0) {
-    return <div className="text-game-text">No genre data available</div>;
-  }
-
   const size = 240;
   const center = size / 2;
   const outerRadius = 90;
   const innerRadius = 54; // 40% of outer
+
+  // Function to calculate optimal anchor point on segment edge
+  const getSegmentAnchorPoint = useCallback((segment: typeof chartData.segments[0]) => {
+    const midAngle = (segment.startAngle + segment.endAngle) / 2;
+    const angleRad = (midAngle * Math.PI) / 180;
+    
+    // Calculate point outside the donut for tooltip anchor
+    const tooltipOffset = 20; // Distance from outer edge in SVG units
+    const anchorRadius = outerRadius + tooltipOffset;
+    const anchorX = center + anchorRadius * Math.cos(angleRad);
+    const anchorY = center + anchorRadius * Math.sin(angleRad);
+    
+    // Determine preferred placement based on segment position
+    const normalizedAngle = ((midAngle % 360) + 360) % 360;
+    let preferredPlacement: 'top' | 'bottom' | 'left' | 'right' = 'top';
+    
+    if (normalizedAngle >= 315 || normalizedAngle < 45) {
+      preferredPlacement = 'right';
+    } else if (normalizedAngle >= 45 && normalizedAngle < 135) {
+      preferredPlacement = 'bottom';
+    } else if (normalizedAngle >= 135 && normalizedAngle < 225) {
+      preferredPlacement = 'left';
+    } else {
+      preferredPlacement = 'top';
+    }
+    
+    return { anchorX, anchorY, preferredPlacement };
+  }, [center, outerRadius]);
+
+  // Handle hover with simplified positioning logic
+  const handleMouseEnter = useCallback((index: number) => {
+    setHoveredIndex(index);
+    
+    if (containerRef.current) {
+      const segment = chartData.segments[index];
+      const midAngle = (segment.startAngle + segment.endAngle) / 2;
+      const angleRad = (midAngle * Math.PI) / 180;
+      
+      // Get container dimensions
+      const containerRect = containerRef.current.getBoundingClientRect();
+      
+      // Calculate the center of the rendered donut
+      const renderCenterX = containerRect.width / 2;
+      const renderCenterY = containerRect.height / 2;
+      
+      // Calculate the rendered radius (accounting for CSS scaling)
+      // The SVG is 240x240 but renders at 320x320 (w-80)
+      const scale = containerRect.width / size;
+      const renderOuterRadius = outerRadius * scale;
+      
+      // Position tooltip outside the donut with a gap
+      const tooltipDistance = renderOuterRadius + (30 * scale); // 30px gap in SVG units
+      const anchorX = renderCenterX + tooltipDistance * Math.cos(angleRad);
+      const anchorY = renderCenterY + tooltipDistance * Math.sin(angleRad);
+      
+      // Determine preferred placement based on angle
+      const normalizedAngle = ((midAngle % 360) + 360) % 360;
+      let preferredPlacement: 'top' | 'bottom' | 'left' | 'right' = 'top';
+      
+      if (normalizedAngle >= 315 || normalizedAngle < 45) {
+        preferredPlacement = 'right';
+      } else if (normalizedAngle >= 45 && normalizedAngle < 135) {
+        preferredPlacement = 'bottom';
+      } else if (normalizedAngle >= 135 && normalizedAngle < 225) {
+        preferredPlacement = 'left';
+      } else {
+        preferredPlacement = 'top';
+      }
+
+      // Simple positioning without complex calculations
+      if (tooltipDimensions) {
+        let x = anchorX;
+        let y = anchorY;
+        
+        // Adjust position based on placement to prevent overlap
+        if (preferredPlacement === 'left') {
+          x -= tooltipDimensions.width;
+          y -= tooltipDimensions.height / 2;
+        } else if (preferredPlacement === 'right') {
+          y -= tooltipDimensions.height / 2;
+        } else if (preferredPlacement === 'top') {
+          x -= tooltipDimensions.width / 2;
+          y -= tooltipDimensions.height;
+        } else {
+          x -= tooltipDimensions.width / 2;
+        }
+        
+        // Ensure tooltip stays within container bounds
+        const padding = 8;
+        x = Math.max(padding, Math.min(x, containerRect.width - tooltipDimensions.width - padding));
+        y = Math.max(padding, Math.min(y, containerRect.height - tooltipDimensions.height - padding));
+        
+        setTooltipPosition({ x, y, placement: preferredPlacement });
+      } else {
+        // Initial position (centered on anchor point)
+        setTooltipPosition({ 
+          x: anchorX - 100, // Approximate half width
+          y: anchorY - 30,  // Approximate half height
+          placement: preferredPlacement 
+        });
+        
+        // Trigger measurement
+        setTimeout(measureTooltip, 16);
+      }
+    }
+  }, [chartData.segments, tooltipDimensions, size, outerRadius, measureTooltip, containerRef]);
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredIndex(null);
+    setTooltipPosition(null);
+  }, []);
+
+  // Recalculate position when tooltip dimensions are measured
+  useEffect(() => {
+    if (hoveredIndex !== null && tooltipDimensions && containerRef.current) {
+      const segment = chartData.segments[hoveredIndex];
+      const midAngle = (segment.startAngle + segment.endAngle) / 2;
+      const angleRad = (midAngle * Math.PI) / 180;
+      
+      // Get container dimensions
+      const containerRect = containerRef.current.getBoundingClientRect();
+      
+      // Calculate the center of the rendered donut
+      const renderCenterX = containerRect.width / 2;
+      const renderCenterY = containerRect.height / 2;
+      
+      // Calculate the rendered radius
+      const scale = containerRect.width / size;
+      const renderOuterRadius = outerRadius * scale;
+      
+      // Position tooltip outside the donut
+      const tooltipDistance = renderOuterRadius + (30 * scale);
+      const anchorX = renderCenterX + tooltipDistance * Math.cos(angleRad);
+      const anchorY = renderCenterY + tooltipDistance * Math.sin(angleRad);
+      
+      // Determine placement
+      const normalizedAngle = ((midAngle % 360) + 360) % 360;
+      let preferredPlacement: 'top' | 'bottom' | 'left' | 'right' = 'top';
+      
+      if (normalizedAngle >= 315 || normalizedAngle < 45) {
+        preferredPlacement = 'right';
+      } else if (normalizedAngle >= 45 && normalizedAngle < 135) {
+        preferredPlacement = 'bottom';
+      } else if (normalizedAngle >= 135 && normalizedAngle < 225) {
+        preferredPlacement = 'left';
+      } else {
+        preferredPlacement = 'top';
+      }
+      
+      // Calculate final position
+      let x = anchorX;
+      let y = anchorY;
+      
+      if (preferredPlacement === 'left') {
+        x -= tooltipDimensions.width;
+        y -= tooltipDimensions.height / 2;
+      } else if (preferredPlacement === 'right') {
+        y -= tooltipDimensions.height / 2;
+      } else if (preferredPlacement === 'top') {
+        x -= tooltipDimensions.width / 2;
+        y -= tooltipDimensions.height;
+      } else {
+        x -= tooltipDimensions.width / 2;
+      }
+      
+      // Keep within bounds
+      const padding = 8;
+      x = Math.max(padding, Math.min(x, containerRect.width - tooltipDimensions.width - padding));
+      y = Math.max(padding, Math.min(y, containerRect.height - tooltipDimensions.height - padding));
+      
+      setTooltipPosition({ x, y, placement: preferredPlacement });
+    }
+  }, [tooltipDimensions, hoveredIndex, chartData.segments, size, outerRadius, containerRef]);
+
+  // Early return after all hooks
+  if (chartData.segments.length === 0) {
+    return <div className="text-game-text">No genre data available</div>;
+  }
 
   // Helper to create SVG path for donut segment
   const createPath = (startAngle: number, endAngle: number): string => {
@@ -86,8 +367,9 @@ export default function GenreDonutChart({ genres, maxGenres = 8 }: GenreDonutCha
   return (
     <div className="flex flex-col items-center gap-6">
       {/* Donut Chart */}
-      <div className="relative">
+      <div ref={containerRef} className="relative">
         <svg 
+          ref={svgRef}
           width={size} 
           height={size} 
           viewBox={`0 0 ${size} ${size}`}
@@ -120,16 +402,16 @@ export default function GenreDonutChart({ genres, maxGenres = 8 }: GenreDonutCha
                 key={segment.name}
                 d={createPath(segment.startAngle, segment.endAngle)}
                 fill={segment.color}
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 transition={{ 
-                  delay: index * 0.1,
-                  duration: 0.6,
+                  delay: 0.3 + index * 0.15,
+                  duration: 0.5,
                   ease: [0.16, 1, 0.3, 1]
                 }}
                 whileHover={{ scale: 1.05 }}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave}
                 onClick={() => window.open(getLastFmTagUrl(segment.name), '_blank')}
                 style={{
                   filter: hoveredIndex === index ? 'brightness(1.2) drop-shadow(0 0 10px currentColor)' : '',
@@ -144,64 +426,57 @@ export default function GenreDonutChart({ genres, maxGenres = 8 }: GenreDonutCha
           <motion.g
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
+            transition={{ delay: 0.6 }}
           >
             <text
               x={center}
-              y={center - 10}
+              y={center - 6}
               textAnchor="middle"
               className="fill-white font-orbitron font-bold capitalize"
-              style={{ fontSize: chartData.segments[0].name.length > 10 ? '14px' : '18px' }}
+              style={{ fontSize: chartData.segments[0].name.length > 8 ? '11px' : '13px' }}
             >
-              {chartData.segments[0].name.length > 12 
-                ? chartData.segments[0].name.slice(0, 12) + '...' 
+              {chartData.segments[0].name.length > 10 
+                ? chartData.segments[0].name.slice(0, 10) + '...' 
                 : chartData.segments[0].name}
             </text>
             <text
               x={center}
-              y={center + 10}
+              y={center + 8}
               textAnchor="middle"
-              className="fill-game-text font-mono text-xs"
+              className="fill-game-text font-mono"
+              style={{ fontSize: '10px' }}
             >
               Top Genre • {chartData.segments[0].percentage.toFixed(1)}%
             </text>
           </motion.g>
         </svg>
         
-        {/* Hover tooltip */}
+        {/* Hover tooltip with geometry-first positioning */}
         <AnimatePresence>
-          {hoveredIndex !== null && (() => {
-            const segment = chartData.segments[hoveredIndex];
-            const midAngle = (segment.startAngle + segment.endAngle) / 2;
-            const tooltipRadius = outerRadius + 60; // Increased from 40 to 60 for more spacing
-            const angleRad = (midAngle * Math.PI) / 180;
-            const x = center + tooltipRadius * Math.cos(angleRad);
-            const y = center + tooltipRadius * Math.sin(angleRad);
-            
-            return (
-              <motion.div
-                key={`tooltip-${hoveredIndex}`}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.15 }}
-                style={{
-                  position: 'absolute',
-                  left: `${x}px`,
-                  top: `${y}px`,
-                  transform: 'translate(-50%, -50%)',
-                }}
-                className="bg-game-dark border border-game-green/50 rounded-lg p-3 shadow-lg pointer-events-none z-10 whitespace-nowrap"
-              >
-                <p className="font-medium text-white capitalize">
-                  {segment.name}
-                </p>
-                <p className="text-sm text-game-text">
-                  {segment.percentage.toFixed(1)}% • {segment.count.toLocaleString()} plays
-                </p>
-              </motion.div>
-            );
-          })()}
+          {hoveredIndex !== null && tooltipPosition && (
+            <motion.div
+              ref={tooltipRef}
+              key={`tooltip-${hoveredIndex}`}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.15 }}
+              style={{
+                position: 'absolute',
+                left: `${tooltipPosition.x}px`,
+                top: `${tooltipPosition.y}px`,
+              }}
+              className="bg-game-dark border border-game-green/50 rounded-lg p-3 shadow-lg pointer-events-none z-50 whitespace-nowrap"
+              onAnimationComplete={measureTooltip}
+            >
+              <p className="font-medium text-white capitalize">
+                {chartData.segments[hoveredIndex].name}
+              </p>
+              <p className="text-sm text-game-text">
+                {chartData.segments[hoveredIndex].percentage.toFixed(1)}% • {chartData.segments[hoveredIndex].count.toLocaleString()} plays
+              </p>
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
       
@@ -216,8 +491,8 @@ export default function GenreDonutChart({ genres, maxGenres = 8 }: GenreDonutCha
             className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-all cursor-pointer ${
               hoveredIndex === index ? 'bg-game-dark' : ''
             }`}
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
+            onMouseEnter={() => handleMouseEnter(index)}
+            onMouseLeave={handleMouseLeave}
             onClick={() => window.open(getLastFmTagUrl(segment.name), '_blank')}
           >
             <div 

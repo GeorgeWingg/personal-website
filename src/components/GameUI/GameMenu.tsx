@@ -8,6 +8,7 @@ export type MenuOption = 'about' | 'projects' | 'now' | 'music' | 'contact';
 interface GameMenuProps {
   activeOption: MenuOption;
   onSelectOption: (option: MenuOption) => void;
+  isFocused?: boolean;
 }
 
 interface MenuItem {
@@ -24,10 +25,12 @@ const menuItems: MenuItem[] = [
   { id: 'contact', label: 'CONTACT', description: 'Get in touch' },
 ];
 
-export default function GameMenu({ activeOption, onSelectOption }: GameMenuProps) {
+export default function GameMenu({ activeOption, onSelectOption, isFocused = true }: GameMenuProps) {
 
   // Keyboard navigation
   useEffect(() => {
+    if (!isFocused) return; // Only handle keyboard when menu is focused
+    
     const handleKeyDown = (e: KeyboardEvent) => {
       const currentIndex = menuItems.findIndex(item => item.id === activeOption);
       
@@ -44,7 +47,7 @@ export default function GameMenu({ activeOption, onSelectOption }: GameMenuProps
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeOption, onSelectOption]);
+  }, [activeOption, onSelectOption, isFocused]);
 
   return (
     <div className="w-full h-full bg-game-panel border-r border-game-border p-6 flex flex-col">
@@ -85,11 +88,6 @@ export default function GameMenu({ activeOption, onSelectOption }: GameMenuProps
           );
         })}
       </nav>
-      
-      {/* Version info */}
-      <div className="mt-auto pt-6 border-t border-game-border">
-        <p className="text-xs text-game-text/50 font-mono">v0.2.0</p>
-      </div>
     </div>
   );
 }

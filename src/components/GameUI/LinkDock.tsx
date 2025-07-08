@@ -66,7 +66,7 @@ export default function LinkDock() {
             
             {/* Tooltip */}
             <motion.div
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-game-dark border border-game-border rounded text-xs font-mono text-game-text whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-6 px-2 py-1 bg-game-dark border border-game-border rounded text-xs font-mono text-game-text whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
               initial={{ y: 10 }}
               whileHover={{ y: 0 }}
             >

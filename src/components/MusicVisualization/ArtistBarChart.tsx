@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { ExternalLink } from 'lucide-react';
 import { LastfmTopArtist } from '@/types/lastfm';
 
 interface ArtistBarChartProps {
@@ -30,9 +31,21 @@ export default function ArtistBarChart({ artists, maxArtists = 10 }: ArtistBarCh
                 <span className="text-xs font-mono text-game-green/60 w-6">
                   #{index + 1}
                 </span>
-                <span className="text-white font-medium truncate max-w-[200px]">
-                  {artist.name}
-                </span>
+                <a
+                  href={artist.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-1.5 text-white font-medium hover:text-game-green transition-colors duration-200 truncate max-w-[200px]"
+                  aria-label={`View ${artist.name} on Last.fm`}
+                >
+                  <span className="truncate">
+                    {artist.name}
+                  </span>
+                  <ExternalLink 
+                    size={12} 
+                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0" 
+                  />
+                </a>
               </div>
               <span className="text-sm text-game-text ml-2">
                 {artist.playcount} plays

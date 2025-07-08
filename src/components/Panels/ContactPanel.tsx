@@ -1,7 +1,12 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Mail, Github, Twitter, Linkedin, MessageSquare } from 'lucide-react';
+import { Mail, Github, Twitter, Linkedin, MessageSquare, Instagram } from 'lucide-react';
+import { useContentNavigation } from '@/hooks/useContentNavigation';
+
+interface ContactPanelProps {
+  isActive?: boolean;
+}
 
 interface ContactMethod {
   label: string;
@@ -35,11 +40,19 @@ const contactMethods: ContactMethod[] = [
     href: 'https://www.linkedin.com/in/george-wing-data/',
     icon: <Linkedin size={20} />,
   },
+  {
+    label: 'Instagram',
+    value: '@georgewggg',
+    href: 'https://www.instagram.com/georgewggg/',
+    icon: <Instagram size={20} />,
+  },
 ];
 
-export default function ContactPanel() {
+export default function ContactPanel({ isActive = false }: ContactPanelProps) {
+  const { containerRef } = useContentNavigation({ isActive });
+  
   return (
-    <div className="max-w-3xl">
+    <div ref={containerRef} className="max-w-3xl">
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
