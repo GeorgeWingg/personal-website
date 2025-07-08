@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BarChart3, Calendar, Heart, Tag } from 'lucide-react';
 import { 
   useRecentTracks, 
@@ -12,7 +12,8 @@ import {
 import { LastfmPeriod } from '@/types/lastfm';
 import ArtistBarChart from '@/components/MusicVisualization/ArtistBarChart';
 import NowPlayingCompact from '@/components/MusicVisualization/NowPlayingCompact';
-import GenreChart from '@/components/MusicVisualization/GenreChart';
+import GenreDonutChart from '@/components/MusicVisualization/GenreDonutChart';
+import GenreChartSkeleton from '@/components/MusicVisualization/GenreChartSkeleton';
 import TimePeriodSelector from '@/components/MusicVisualization/TimePeriodSelector';
 
 export default function MusicPanel() {
@@ -21,6 +22,33 @@ export default function MusicPanel() {
   const { artists, loading: artistsLoading } = useTopArtists(selectedPeriod, 50);
   const { tracks: lovedTracks, loading: lovedLoading } = useLovedTracks(6);
   const { genres, loading: genresLoading } = useGenreAnalysis(selectedPeriod);
+
+  // Pre-warm cache for adjacent periods
+  useEffect(() => {
+    const periods: LastfmPeriod[] = ['7day', '1month', '3month'];
+    periods.forEach(period => {
+      if (period !== selectedPeriod) {
+        const cacheKey = `lastfm-genres-${period}`;
+        const cached = localStorage.getItem(cacheKey);
+        if (!cached) {
+          // Pre-fetch in background with low priority
+          setTimeout(() => {
+            fetch(`/api/lastfm/genre-analysis?period=${period}`)
+              .then(res => res.json())
+              .then(data => {
+                if (data.genres) {
+                  localStorage.setItem(cacheKey, JSON.stringify({
+                    data: data.genres,
+                    timestamp: Date.now()
+                  }));
+                }
+              })
+              .catch(() => {});
+          }, 5000); // Wait 5 seconds before pre-fetching
+        }
+      }
+    });
+  }, []);
 
 
   return (
@@ -64,13 +92,10 @@ export default function MusicPanel() {
             <h3 className="font-orbitron font-bold text-xl text-white">Genre Distribution</h3>
           </div>
 
-          {genresLoading ? (
-            <div className="text-game-text">
-              <p>Analyzing your music taste...</p>
-              <p className="text-xs mt-2 text-game-text/60">This may take a moment on first load</p>
-            </div>
+          {genresLoading && genres.length === 0 ? (
+            <GenreChartSkeleton />
           ) : genres.length > 0 ? (
-            <GenreChart genres={genres} maxGenres={8} />
+            <GenreDonutChart genres={genres} maxGenres={8} />
           ) : (
             <div className="text-game-text">
               <p>Genre analysis temporarily unavailable</p>

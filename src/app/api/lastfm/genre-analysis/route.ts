@@ -34,12 +34,34 @@ export async function GET(request: Request) {
       'swedish', 'norwegian', 'danish', 'icelandic', 'australian'
     ];
     
-    // Fetch tags for each artist with rate limiting
-    for (const artist of artists) {
-      try {
-        const tagsResponse = await client.getArtistTopTags(artist.name);
-        const tags = tagsResponse.toptags.tag.slice(0, 5); // Get top 5 tags per artist
+    // Process artists in batches for better performance
+    const batchSize = 5;
+    const processBatch = async (batch: typeof artists) => {
+      return Promise.all(
+        batch.map(async (artist) => {
+          try {
+            const tagsResponse = await client.getArtistTopTags(artist.name);
+            const tags = tagsResponse.toptags.tag.slice(0, 5);
+            
+            return { artist, tags };
+          } catch (error) {
+            console.error(`Failed to fetch tags for ${artist.name}:`, error);
+            return null;
+          }
+        })
+      );
+    };
+    
+    // Process all artists in batches
+    for (let i = 0; i < artists.length; i += batchSize) {
+      const batch = artists.slice(i, i + batchSize);
+      const results = await processBatch(batch);
+      
+      // Process results
+      for (const result of results) {
+        if (!result) continue;
         
+        const { artist, tags } = result;
         for (const tag of tags) {
           const tagName = tag.name.toLowerCase();
           
@@ -49,12 +71,11 @@ export async function GET(request: Request) {
             genreCounts[tag.name] = (genreCounts[tag.name] || 0) + weight;
           }
         }
-        
-        // Rate limiting - wait 200ms between requests to be safer
+      }
+      
+      // Rate limiting between batches (not individual requests)
+      if (i + batchSize < artists.length) {
         await new Promise(resolve => setTimeout(resolve, 200));
-      } catch (error) {
-        console.error(`Failed to fetch tags for ${artist.name}:`, error);
-        // Continue with other artists even if one fails
       }
     }
     

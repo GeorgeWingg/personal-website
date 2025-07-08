@@ -306,8 +306,42 @@ export function useGenreAnalysis(period: LastfmPeriod): UseGenreAnalysisResult {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    const cacheKey = `lastfm-genres-${period}`;
+    const cacheExpiry = 60 * 60 * 1000; // 1 hour in milliseconds
+
     const fetchGenres = async () => {
       try {
+        // Check cache first
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          const age = Date.now() - timestamp;
+          
+          if (age < cacheExpiry) {
+            // Use cached data
+            setGenres(data);
+            setLoading(false);
+            
+            // Optionally fetch fresh data in background
+            if (age > cacheExpiry / 2) { // If older than 30 minutes
+              fetch(`/api/lastfm/genre-analysis?period=${period}`)
+                .then(res => res.json())
+                .then(freshData => {
+                  if (freshData.genres) {
+                    localStorage.setItem(cacheKey, JSON.stringify({
+                      data: freshData.genres,
+                      timestamp: Date.now()
+                    }));
+                    setGenres(freshData.genres);
+                  }
+                })
+                .catch(() => {}); // Silently fail background update
+            }
+            return;
+          }
+        }
+
+        // No cache or expired, fetch fresh data
         setLoading(true);
         const response = await fetch(`/api/lastfm/genre-analysis?period=${period}`);
         
@@ -316,9 +350,24 @@ export function useGenreAnalysis(period: LastfmPeriod): UseGenreAnalysisResult {
         }
         
         const data = await response.json();
-        setGenres(data.genres || []);
+        const genresData = data.genres || [];
+        
+        // Cache the result
+        localStorage.setItem(cacheKey, JSON.stringify({
+          data: genresData,
+          timestamp: Date.now()
+        }));
+        
+        setGenres(genresData);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Unknown error'));
+        
+        // Try to use stale cache on error
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          const { data } = JSON.parse(cached);
+          setGenres(data);
+        }
       } finally {
         setLoading(false);
       }
