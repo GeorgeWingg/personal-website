@@ -2,7 +2,8 @@
 
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { BarChart3, Calendar, Heart, Tag } from 'lucide-react';
+import { BarChart3, ExternalLink, Heart, Tag } from 'lucide-react';
+import Image from 'next/image';
 import { 
   useRecentTracks, 
   useTopArtists, 
@@ -159,27 +160,36 @@ export default function MusicPanel() {
           </motion.div>
         )}
 
-        {/* Music Discovery Score */}
+        {/* Last.fm Profile Link */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-game-dark rounded-lg border border-game-border p-6"
+          className="bg-game-dark rounded-lg border border-game-border p-6 hover:border-game-green/50 transition-all cursor-pointer group"
+          onClick={() => window.open('https://www.last.fm/user/GeorgeWing', '_blank')}
         >
-          <div className="flex items-center gap-3 mb-4">
-            <Calendar className="w-6 h-6 text-game-blue" />
-            <h3 className="font-orbitron font-bold text-xl text-white">Coming Soon</h3>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-game-text">
-            <div className="bg-game-panel/50 rounded-lg p-4 border border-game-border">
-              <p className="font-mono text-game-green mb-1">Listening Trends</p>
-              <p className="text-xs">Weekly play count charts & listening patterns over time</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-game-border flex-shrink-0">
+                <Image 
+                  src="/profile-avatar-hd.jpg" 
+                  alt="George Wing" 
+                  width={96} 
+                  height={96}
+                  className="w-full h-full object-cover"
+                  quality={100}
+                />
+              </div>
+              <div>
+                <h3 className="font-orbitron font-bold text-xl text-white group-hover:text-game-green transition-colors">
+                  View Full Profile
+                </h3>
+                <p className="text-sm text-game-text">
+                  @GeorgeWing on Last.fm
+                </p>
+              </div>
             </div>
-            <div className="bg-game-panel/50 rounded-lg p-4 border border-game-border">
-              <p className="font-mono text-purple-400 mb-1">Discovery Score</p>
-              <p className="text-xs">New vs familiar music ratio & exploration metrics</p>
-            </div>
+            <ExternalLink className="w-5 h-5 text-game-text group-hover:text-game-green transition-colors" />
           </div>
         </motion.div>
       </div>

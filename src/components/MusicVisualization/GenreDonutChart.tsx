@@ -16,6 +16,12 @@ interface GenreDonutChartProps {
 export default function GenreDonutChart({ genres, maxGenres = 8 }: GenreDonutChartProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   
+  // Helper function to create Last.fm tag URL
+  const getLastFmTagUrl = (genreName: string): string => {
+    const formattedTag = genreName.toLowerCase().replace(/\s+/g, '+');
+    return `https://www.last.fm/tag/${formattedTag}`;
+  };
+  
   const chartData = useMemo(() => {
     const topGenres = genres.slice(0, maxGenres);
     if (topGenres.length === 0) return { segments: [], total: 0 };
@@ -124,6 +130,7 @@ export default function GenreDonutChart({ genres, maxGenres = 8 }: GenreDonutCha
                 whileHover={{ scale: 1.05 }}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
+                onClick={() => window.open(getLastFmTagUrl(segment.name), '_blank')}
                 style={{
                   filter: hoveredIndex === index ? 'brightness(1.2) drop-shadow(0 0 10px currentColor)' : '',
                   transformOrigin: `${center}px ${center}px`,
@@ -211,6 +218,7 @@ export default function GenreDonutChart({ genres, maxGenres = 8 }: GenreDonutCha
             }`}
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
+            onClick={() => window.open(getLastFmTagUrl(segment.name), '_blank')}
           >
             <div 
               className="w-3 h-3 rounded-full"
