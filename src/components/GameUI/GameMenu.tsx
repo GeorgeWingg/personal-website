@@ -1,7 +1,7 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 
 export type MenuOption = 'about' | 'projects' | 'now' | 'music' | 'contact';
 
@@ -25,7 +25,6 @@ const menuItems: MenuItem[] = [
 ];
 
 export default function GameMenu({ activeOption, onSelectOption }: GameMenuProps) {
-  const [hoveredItem, setHoveredItem] = useState<MenuOption | null>(null);
 
   // Keyboard navigation
   useEffect(() => {
@@ -56,14 +55,11 @@ export default function GameMenu({ activeOption, onSelectOption }: GameMenuProps
       <nav className="flex-1 space-y-2">
         {menuItems.map((item) => {
           const isActive = activeOption === item.id;
-          const isHovered = hoveredItem === item.id;
           
           return (
             <motion.button
               key={item.id}
               onClick={() => onSelectOption(item.id)}
-              onMouseEnter={() => setHoveredItem(item.id)}
-              onMouseLeave={() => setHoveredItem(null)}
               className={`relative w-full text-left p-4 rounded-lg transition-all duration-200 ${
                 isActive ? 'outline outline-2 outline-white' : ''
               }`}

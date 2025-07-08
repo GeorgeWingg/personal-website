@@ -50,7 +50,7 @@ export default function NowPanel() {
         transition={{ delay: 0.2 }}
         className="text-lg text-game-text mb-8"
       >
-        What I'm focused on at this point in my life.
+        What I&apos;m focused on at this point in my life.
       </motion.p>
       
       <motion.div

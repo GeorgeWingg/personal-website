@@ -21,14 +21,14 @@ export default function AboutPanel() {
         className="space-y-6"
       >
         <p className="text-lg leading-relaxed text-game-text">
-          Hey, I'm George – a builder obsessed with leverage, AI-native systems and
-          thoughtful product design. I've spent the last few years shipping tools
+          Hey, I&apos;m George – a builder obsessed with leverage, AI-native systems and
+          thoughtful product design. I&apos;ve spent the last few years shipping tools
           that help people move faster by collaborating with machines.
         </p>
         
         <p className="text-lg leading-relaxed text-game-text">
           Currently in London, working on AI agents and thinking about the future.
-          When I'm not coding, you'll find me exploring new music or scribbling 
+          When I&apos;m not coding, you&apos;ll find me exploring new music or scribbling 
           product ideas in a notebook.
         </p>
         
