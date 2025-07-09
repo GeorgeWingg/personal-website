@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { Menu, X } from 'lucide-react';
 import GameFrame from '@/components/GameUI/GameFrame';
 import GameMenu, { MenuOption } from '@/components/GameUI/GameMenu';
 import ContentPanel from '@/components/GameUI/ContentPanel';
@@ -16,6 +17,7 @@ type FocusArea = 'menu' | 'content';
 export default function Home() {
   const [activeOption, setActiveOption] = useState<MenuOption>('about');
   const [focusArea, setFocusArea] = useState<FocusArea>('menu');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   
   // Sync with URL hash
@@ -58,6 +60,7 @@ export default function Home() {
   const handleMenuSelect = (option: MenuOption) => {
     setActiveOption(option);
     window.location.hash = option;
+    setMobileMenuOpen(false); // Close mobile menu on selection
   };
 
   // Global keyboard navigation
@@ -94,31 +97,64 @@ export default function Home() {
 
   return (
     <GameFrame>
-      <div className="h-full flex relative">
-        {/* Menu - 1/4 width */}
-        <div className={`w-1/4 min-w-[250px] h-full transition-all ${
-          focusArea === 'menu' ? 'ring-2 ring-white/20 ring-inset' : ''
-        }`}>
-          <GameMenu 
-            activeOption={activeOption} 
-            onSelectOption={handleMenuSelect}
-            isFocused={focusArea === 'menu'}
-          />
+      <div className="h-full flex flex-col">
+        {/* Mobile menu button */}
+        <div className="md:hidden flex items-center justify-between p-4 bg-game-panel border-b border-game-border">
+          <h2 className="font-orbitron font-bold text-lg text-white">MENU</h2>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-lg bg-game-dark border border-game-border hover:border-game-green transition-colors"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        {/* Main content area */}
+        <div className="flex-1 flex min-h-0 relative">
+          {/* Mobile menu overlay */}
+          {mobileMenuOpen && (
+            <div 
+              className="md:hidden absolute inset-0 bg-black/50 z-40"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+          )}
+          
+          {/* Menu - responsive width */}
+          <div className={`
+            absolute md:relative
+            ${mobileMenuOpen ? 'left-0' : '-left-full'}
+            md:left-0
+            w-3/4 sm:w-1/2 md:w-1/4 
+            min-w-[250px] h-full 
+            transition-all duration-300 ease-in-out
+            z-50 md:z-auto
+            ${focusArea === 'menu' ? 'ring-2 ring-white/20 ring-inset' : ''}
+          `}>
+            <GameMenu 
+              activeOption={activeOption} 
+              onSelectOption={handleMenuSelect}
+              isFocused={focusArea === 'menu'}
+            />
+          </div>
+          
+          {/* Content - responsive padding */}
+          <div 
+            ref={contentRef}
+            className={`
+              flex-1 h-full 
+              p-4 md:p-6 
+              overflow-y-auto transition-all 
+              ${focusArea === 'content' ? 'ring-2 ring-white/20 ring-inset' : ''}
+            `}
+          >
+            <ContentPanel isActive={true}>
+              {renderPanel()}
+            </ContentPanel>
+          </div>
         </div>
         
-        {/* Content - 3/4 width */}
-        <div 
-          ref={contentRef}
-          className={`flex-1 h-full p-6 pb-20 transition-all ${
-            focusArea === 'content' ? 'ring-2 ring-white/20 ring-inset' : ''
-          }`}
-        >
-          <ContentPanel isActive={true}>
-            {renderPanel()}
-          </ContentPanel>
-        </div>
-        
-        {/* Link Dock */}
+        {/* Link Dock - responsive */}
         <LinkDock />
       </div>
     </GameFrame>

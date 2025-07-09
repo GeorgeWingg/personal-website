@@ -39,8 +39,8 @@ const socialLinks: SocialLink[] = [
 
 export default function LinkDock() {
   return (
-    <div className="absolute bottom-0 left-0 right-0 h-16 bg-game-panel border-t border-game-border flex items-center justify-center gap-8 px-6 z-10">
-      <div className="flex items-center gap-6">
+    <div className="h-16 bg-game-panel border-t border-game-border flex items-center justify-between px-4 md:px-6 flex-shrink-0">
+      <div className="flex items-center gap-3 md:gap-6 mx-auto">
         {socialLinks.map((link) => (
           <motion.a
             key={link.id}
@@ -52,7 +52,7 @@ export default function LinkDock() {
             whileTap={{ scale: 0.95 }}
           >
             {/* Icon container */}
-            <div className="relative w-12 h-12 flex items-center justify-center rounded-lg bg-game-dark border border-game-border transition-all duration-200 group-hover:border-game-green group-hover:shadow-game-glow">
+            <div className="relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg bg-game-dark border border-game-border transition-all duration-200 group-hover:border-game-green group-hover:shadow-game-glow">
               <span className="text-game-text group-hover:text-game-green transition-colors">
                 {link.icon}
               </span>
@@ -64,9 +64,9 @@ export default function LinkDock() {
               />
             </div>
             
-            {/* Tooltip */}
+            {/* Tooltip - hidden on mobile */}
             <motion.div
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-6 px-2 py-1 bg-game-dark border border-game-border rounded text-xs font-mono text-game-text whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+              className="hidden md:block absolute bottom-full left-1/2 -translate-x-1/2 mb-6 px-2 py-1 bg-game-dark border border-game-border rounded text-xs font-mono text-game-text whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
               initial={{ y: 10 }}
               whileHover={{ y: 0 }}
             >
@@ -77,8 +77,8 @@ export default function LinkDock() {
         ))}
       </div>
       
-      {/* Version info on the right */}
-      <div className="ml-auto">
+      {/* Version info - hidden on mobile */}
+      <div className="hidden sm:block absolute right-4 md:right-6">
         <p className="text-xs text-game-text/50 font-mono">v0.2.0</p>
       </div>
     </div>

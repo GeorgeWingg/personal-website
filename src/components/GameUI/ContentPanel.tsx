@@ -27,7 +27,7 @@ export default function ContentPanel({ children, isActive }: ContentPanelProps) 
             <div className="absolute inset-0 bg-game-gloss pointer-events-none" />
             
             {/* Content container with scrolling */}
-            <div className="relative h-full overflow-y-auto custom-scrollbar p-8">
+            <div className="relative h-full overflow-y-auto custom-scrollbar p-4 md:p-8">
               {children}
             </div>
           </div>

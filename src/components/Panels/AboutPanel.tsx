@@ -52,7 +52,7 @@ export default function AboutPanel({ isActive = false }: AboutPanelProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="font-orbitron font-bold text-3xl mb-8 text-game-green"
+        className="font-orbitron font-bold text-2xl md:text-3xl mb-6 md:mb-8 text-game-green"
       >
         ABOUT
       </motion.h2>
@@ -63,23 +63,23 @@ export default function AboutPanel({ isActive = false }: AboutPanelProps) {
         transition={{ delay: 0.2 }}
         className="space-y-6"
       >
-        <p className="text-lg leading-relaxed text-game-text">
+        <p className="text-base md:text-lg leading-relaxed text-game-text">
           Hi, I&apos;m George. Currently thinking about and building the best ways to scale intelligence.
         </p>
         
-        <p className="text-lg leading-relaxed text-game-text">
+        <p className="text-base md:text-lg leading-relaxed text-game-text">
           Previously worked as a Data Engineer in Finance. Agents are the most interesting thing to me at the moment.
         </p>
         
-        <p className="text-lg leading-relaxed text-game-text">
+        <p className="text-base md:text-lg leading-relaxed text-game-text">
           Looking to spend the short time we have pre-superintelligence working on things I find interesting and building leverage.
         </p>
         
-        <p className="text-lg leading-relaxed text-game-text">
+        <p className="text-base md:text-lg leading-relaxed text-game-text">
           Currently in London, but also spending time in San Francisco and the Isle of Man.
         </p>
         
-        <div className="mt-8 p-6 bg-game-dark rounded-lg border border-game-border">
+        <div className="mt-6 md:mt-8 p-4 md:p-6 bg-game-dark rounded-lg border border-game-border">
           <h3 className="font-orbitron font-bold text-sm text-game-green mb-6">INTERESTS</h3>
           
           <div className="flex flex-wrap gap-2">

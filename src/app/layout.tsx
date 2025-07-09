@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "George Wing",
-  description: "Building at the intersection of AI and human potential",
+  description: "Building AI agents, goal trees, and thinking about the future",
 };
 
 export default function RootLayout({
