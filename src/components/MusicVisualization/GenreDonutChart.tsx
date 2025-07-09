@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useRef } from 'react';
 import { LastfmTopArtist } from '@/types/lastfm';
 
 interface GenreData {
@@ -17,6 +17,8 @@ interface GenreDonutChartProps {
 
 export default function GenreDonutChart({ genres, artists = [], maxGenres = 8 }: GenreDonutChartProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Helper function to create Last.fm tag URL
   const getLastFmTagUrl = (genreName: string): string => {
@@ -109,6 +111,34 @@ export default function GenreDonutChart({ genres, artists = [], maxGenres = 8 }:
     return map;
   }, [genres, artists]);
   
+  // Pre-computed tooltip content data structure
+  const tooltipData = useMemo(() => {
+    const topGenres = genres.slice(0, maxGenres);
+    if (topGenres.length === 0) return new Map();
+    
+    const tooltipMap = new Map<string, {
+      name: string;
+      percentage: number;
+      count: number;
+      artists: LastfmTopArtist[];
+    }>();
+    
+    topGenres.forEach(genre => {
+      const artists = genreArtistMap.get(genre.name) || [];
+      const total = topGenres.reduce((sum, g) => sum + g.count, 0);
+      const percentage = (genre.count / total) * 100;
+      
+      tooltipMap.set(genre.name, {
+        name: genre.name,
+        percentage,
+        count: genre.count,
+        artists,
+      });
+    });
+    
+    return tooltipMap;
+  }, [genres, maxGenres, genreArtistMap]);
+
   const chartData = useMemo(() => {
     const topGenres = genres.slice(0, maxGenres);
     if (topGenres.length === 0) return { segments: [], total: 0 };
@@ -141,13 +171,29 @@ export default function GenreDonutChart({ genres, artists = [], maxGenres = 8 }:
   const innerRadius = 54; // 40% of outer
 
 
-  // Simple hover logic - no complex positioning needed
+  // Enhanced hover logic with delay for smooth animations
   const handleMouseEnter = useCallback((index: number) => {
+    // Clear any existing timeout
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    
     setHoveredIndex(index);
+    
+    // Show tooltip after a short delay to prevent flickering
+    hoverTimeoutRef.current = setTimeout(() => {
+      setShowTooltip(true);
+    }, 100);
   }, []);
 
   const handleMouseLeave = useCallback(() => {
+    // Clear timeout and immediately hide
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    
     setHoveredIndex(null);
+    setShowTooltip(false);
   }, []);
 
   // Early return after all hooks
@@ -271,59 +317,81 @@ export default function GenreDonutChart({ genres, artists = [], maxGenres = 8 }:
         </div>
         
         {/* Fixed Tooltip Area - Right Side */}
-        <div className="w-full md:w-64 md:h-48 flex items-start justify-center">
-          <AnimatePresence>
-            {hoveredIndex !== null && (
-              <motion.div
-                key={`tooltip-${hoveredIndex}`}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.2 }}
-                className="bg-game-dark border border-game-green/50 rounded-lg p-4 shadow-lg w-full h-full flex flex-col"
-              >
-                <div className="mb-3">
-                  <p className="font-medium text-white capitalize text-lg mb-2">
-                    {chartData.segments[hoveredIndex].name}
-                  </p>
-                  <p className="text-sm text-game-text mb-1">
-                    {chartData.segments[hoveredIndex].percentage.toFixed(1)}% of listening time
-                  </p>
-                  <p className="text-sm text-game-text">
-                    {chartData.segments[hoveredIndex].count.toLocaleString()} plays
-                  </p>
-                </div>
-                
-                <div className="flex-1">
-                  <p className="text-xs font-mono text-game-green mb-2 uppercase tracking-wide">
-                    Top Artists
-                  </p>
-                  <div className="space-y-1">
-                    {(() => {
-                      const genreName = chartData.segments[hoveredIndex].name;
-                      const topArtists = genreArtistMap.get(genreName);
-                      
-                      if (!topArtists || topArtists.length === 0) {
-                        return (
-                          <p className="text-sm text-game-text/60 italic">No artist data available</p>
-                        );
-                      }
-                      
-                      return topArtists.map((artist, index) => (
-                        <div key={artist.name} className="flex items-center justify-between">
-                          <p className="text-sm text-white truncate flex-1 mr-2">
-                            {index + 1}. {artist.name}
-                          </p>
-                          <p className="text-xs text-game-text font-mono flex-shrink-0">
-                            {parseInt(artist.playcount).toLocaleString()}
-                          </p>
-                        </div>
-                      ));
-                    })()}
-                  </div>
-                </div>
-              </motion.div>
-            )}
+        <div className="w-full md:w-64 md:h-60 flex items-start justify-center">
+          <AnimatePresence mode="wait">
+            {hoveredIndex !== null && showTooltip && (() => {
+              const genreName = chartData.segments[hoveredIndex].name;
+              const tooltipContent = tooltipData.get(genreName);
+              
+              if (!tooltipContent) return null;
+              
+              return (
+                <motion.div
+                  key={`tooltip-${hoveredIndex}`}
+                  initial={{ opacity: 0, x: 20, scale: 0.95 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: 20, scale: 0.95 }}
+                  transition={{ 
+                    duration: 0.2,
+                    ease: [0.25, 0.46, 0.45, 0.94],
+                    opacity: { duration: 0.15 },
+                    scale: { duration: 0.18 }
+                  }}
+                  className="bg-game-dark border border-game-green/50 rounded-lg p-4 shadow-lg w-full h-full flex flex-col"
+                  style={{ minHeight: '240px' }} // Stabilize layout
+                >
+                  <motion.div 
+                    className="mb-3"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05, duration: 0.15 }}
+                  >
+                    <p className="font-medium text-white capitalize text-lg mb-2">
+                      {tooltipContent.name}
+                    </p>
+                    <p className="text-sm text-game-text mb-1">
+                      {tooltipContent.percentage.toFixed(1)}% of listening time
+                    </p>
+                    <p className="text-sm text-game-text">
+                      {tooltipContent.count.toLocaleString()} plays
+                    </p>
+                  </motion.div>
+                  
+                  <motion.div 
+                    className="flex-1"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.08, duration: 0.15 }}
+                  >
+                    <p className="text-xs font-mono text-game-green mb-2 uppercase tracking-wide">
+                      Top Artists
+                    </p>
+                    <div className="space-y-1" style={{ minHeight: '100px' }}>
+                      {tooltipContent.artists.length === 0 ? (
+                        <p className="text-sm text-game-text/60 italic">No artist data available</p>
+                      ) : (
+                        tooltipContent.artists.map((artist, artistIndex) => (
+                          <motion.div 
+                            key={artist.name} 
+                            className="flex items-center justify-between"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.12 + artistIndex * 0.03, duration: 0.15 }}
+                          >
+                            <p className="text-sm text-white truncate flex-1 mr-2">
+                              {artistIndex + 1}. {artist.name}
+                            </p>
+                            <p className="text-xs text-game-text font-mono flex-shrink-0">
+                              {parseInt(artist.playcount).toLocaleString()}
+                            </p>
+                          </motion.div>
+                        ))
+                      )}
+                    </div>
+                  </motion.div>
+                </motion.div>
+              );
+            })()}
           </AnimatePresence>
         </div>
       </div>

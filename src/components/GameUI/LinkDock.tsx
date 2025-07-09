@@ -39,7 +39,7 @@ const socialLinks: SocialLink[] = [
 
 export default function LinkDock() {
   return (
-    <div className="absolute bottom-0 left-0 right-0 h-16 bg-game-panel border-t border-game-border flex items-center justify-center gap-8 px-6">
+    <div className="absolute bottom-0 left-0 right-0 h-16 bg-game-panel border-t border-game-border flex items-center justify-center gap-8 px-6 z-10">
       <div className="flex items-center gap-6">
         {socialLinks.map((link) => (
           <motion.a

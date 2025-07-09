@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { BarChart3, ExternalLink, Heart, Tag } from 'lucide-react';
 import Image from 'next/image';
@@ -100,16 +100,41 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
             <h3 className="font-orbitron font-bold text-xl text-white">Genre Distribution</h3>
           </div>
 
-          {genresLoading && genres.length === 0 ? (
-            <GenreChartSkeleton />
-          ) : genres.length > 0 ? (
-            <GenreDonutChart genres={genres} artists={artists} maxGenres={8} />
-          ) : (
-            <div className="text-game-text">
-              <p>Genre analysis temporarily unavailable</p>
-              <p className="text-xs mt-2 text-game-text/60">Try selecting a different time period or refresh in a few minutes</p>
-            </div>
-          )}
+          <AnimatePresence mode="wait">
+            {genresLoading && genres.length === 0 ? (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <GenreChartSkeleton />
+              </motion.div>
+            ) : genres.length > 0 ? (
+              <motion.div
+                key="chart"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+              >
+                <GenreDonutChart genres={genres} artists={artists} maxGenres={8} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="error"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="text-game-text"
+              >
+                <p>Genre analysis temporarily unavailable</p>
+                <p className="text-xs mt-2 text-game-text/60">Try selecting a different time period or refresh in a few minutes</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* Top Artists with Period Selector */}

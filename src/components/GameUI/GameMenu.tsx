@@ -63,15 +63,21 @@ export default function GameMenu({ activeOption, onSelectOption, isFocused = tru
             <motion.button
               key={item.id}
               onClick={() => onSelectOption(item.id)}
-              className={`relative w-full text-left p-4 rounded-lg transition-all duration-200 ${
-                isActive ? 'outline outline-2 outline-white' : ''
-              }`}
+              className="relative w-full text-left p-4 rounded-lg transition-all duration-200"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              {/* Background glow for active item - removed per user request */}
-              
-              {/* Hover glow - removed per user request */}
+              {/* Animated selection background */}
+              {isActive && (
+                <motion.div
+                  layoutId="menu-selector"
+                  className="absolute inset-0 bg-game-dark border-2 border-white rounded-lg shadow-lg"
+                  transition={{ 
+                    duration: 0.3, 
+                    ease: [0.25, 0.46, 0.45, 0.94] 
+                  }}
+                />
+              )}
               
               {/* Content */}
               <div className="relative z-10">
@@ -82,8 +88,6 @@ export default function GameMenu({ activeOption, onSelectOption, isFocused = tru
                   {item.description}
                 </p>
               </div>
-              
-              {/* Selection indicator - removed per user request */}
             </motion.button>
           );
         })}
