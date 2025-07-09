@@ -56,7 +56,7 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
         }
       }
     });
-  }, []);
+  }, [selectedPeriod]);
 
 
   return (

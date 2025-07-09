@@ -50,7 +50,7 @@ export default function GenreDonutChart({ genres, artists = [], maxGenres = 8 }:
       
       // Distribute artists based on play count and consistent hashing
       // This ensures the same artists always appear for the same genres
-      artists.forEach((artist, artistIndex) => {
+      artists.forEach((artist) => {
         const artistName = artist.name.toLowerCase();
         const artistHash = hashString(artist.name + genre.name);
         const playcount = parseInt(artist.playcount);
@@ -370,7 +370,7 @@ export default function GenreDonutChart({ genres, artists = [], maxGenres = 8 }:
                       {tooltipContent.artists.length === 0 ? (
                         <p className="text-sm text-game-text/60 italic">No artist data available</p>
                       ) : (
-                        tooltipContent.artists.map((artist, artistIndex) => (
+                        tooltipContent.artists.map((artist: LastfmTopArtist, artistIndex: number) => (
                           <motion.div 
                             key={artist.name} 
                             className="flex items-center justify-between"

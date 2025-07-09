@@ -66,12 +66,13 @@ export function useContentNavigation({ isActive, onNavigate }: UseContentNavigat
       }
     };
 
+    const container = containerRef.current;
     window.addEventListener('keydown', handleKeyDown);
-    containerRef.current?.addEventListener('focusin', handleFocusIn);
+    container?.addEventListener('focusin', handleFocusIn);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      containerRef.current?.removeEventListener('focusin', handleFocusIn);
+      container?.removeEventListener('focusin', handleFocusIn);
     };
   }, [isActive, focusElement, getFocusableElements]);
 
