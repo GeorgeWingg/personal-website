@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Orbitron, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const orbitron = Orbitron({
@@ -30,6 +31,7 @@ export default function RootLayout({
         className={`${orbitron.variable} ${jetbrainsMono.variable} font-jetbrains antialiased bg-game-black text-white`}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
