@@ -115,7 +115,7 @@ export default function Home() {
           {/* Mobile menu overlay */}
           {mobileMenuOpen && (
             <div 
-              className="md:hidden absolute inset-0 bg-black/50 z-40"
+              className="md:hidden absolute inset-0 bg-black/30 backdrop-blur-sm z-40"
               onClick={() => setMobileMenuOpen(false)}
             />
           )}
