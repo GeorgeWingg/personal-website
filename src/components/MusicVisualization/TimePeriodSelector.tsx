@@ -36,30 +36,43 @@ export default function TimePeriodSelector({ selectedPeriod, onPeriodChange }: T
           </div>
         </div>
         
-        <div className="flex gap-1">
-          {periods.map((period) => (
-            <motion.button
-              key={period.value}
-              onClick={() => onPeriodChange(period.value)}
-              className={`relative px-4 py-2 text-xs font-mono rounded-lg transition-all game-focus ${
-                selectedPeriod === period.value
-                  ? 'text-black font-bold'
-                  : 'text-game-text hover:text-white hover:bg-game-border'
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              tabIndex={0}
-            >
-              {selectedPeriod === period.value && (
-                <motion.div
-                  layoutId="period-selector"
-                  className="absolute inset-0 bg-game-green rounded-lg"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
-              <span className="relative z-10">{period.label}</span>
-            </motion.button>
-          ))}
+        <div className="flex flex-wrap gap-1 sm:flex-nowrap sm:overflow-x-auto sm:custom-scrollbar min-w-0">
+          {periods.map((period) => {
+            const isActive = selectedPeriod === period.value;
+            
+            return (
+              <motion.button
+                key={period.value}
+                onClick={() => onPeriodChange(period.value)}
+                className={`
+                  relative px-3 sm:px-4 py-2 text-xs font-orbitron font-bold tracking-wider
+                  transition-all duration-200 rounded-md game-focus whitespace-nowrap flex-shrink-0
+                  ${isActive 
+                    ? 'text-white' 
+                    : 'text-game-text hover:text-white hover:bg-game-border'
+                  }
+                `}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                tabIndex={0}
+              >
+                {/* Active background - fixed colors */}
+                {isActive && (
+                  <motion.div
+                    layoutId="period-selector"
+                    className="absolute inset-0 bg-game-green/20 border border-game-green/40 rounded-md"
+                    transition={{ 
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 35,
+                      mass: 1
+                    }}
+                  />
+                )}
+                <span className="relative z-10">{period.label}</span>
+              </motion.button>
+            );
+          })}
         </div>
       </div>
     </motion.div>
