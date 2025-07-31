@@ -249,3 +249,32 @@ export interface LastfmArtistTopTagsResponse {
     };
   };
 }
+
+export interface LastfmTopAlbum {
+  name: string;
+  playcount: string;
+  mbid?: string;
+  url: string;
+  artist: {
+    name: string;
+    mbid?: string;
+    url: string;
+  };
+  image: LastfmImage[];
+  '@attr'?: {
+    rank: string;
+  };
+}
+
+export interface LastfmTopAlbumsResponse {
+  topalbums: {
+    album: LastfmTopAlbum[];
+    '@attr': {
+      user: string;
+      totalPages: string;
+      page: string;
+      perPage: string;
+      total: string;
+    };
+  };
+}

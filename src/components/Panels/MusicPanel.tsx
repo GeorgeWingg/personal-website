@@ -1,21 +1,21 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
-import { BarChart3, ExternalLink, Heart, Tag } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { BarChart3, ExternalLink, Heart, Album } from 'lucide-react';
 import Image from 'next/image';
 import { 
   useRecentTracks, 
   useTopArtists, 
   useLovedTracks,
-  useGenreAnalysis
+  useTopAlbumsWithArtwork
 } from '@/hooks/useLastfmData';
 import { LastfmPeriod } from '@/types/lastfm';
 import ArtistBarChart from '@/components/MusicVisualization/ArtistBarChart';
 import NowPlayingCompact from '@/components/MusicVisualization/NowPlayingCompact';
-import GenreDonutChart from '@/components/MusicVisualization/GenreDonutChart';
-import GenreChartSkeleton from '@/components/MusicVisualization/GenreChartSkeleton';
 import TimePeriodSelector from '@/components/MusicVisualization/TimePeriodSelector';
+import AlbumGrid from '@/components/MusicVisualization/AlbumGrid';
+import GridSizeSelector, { GridSizeOption } from '@/components/MusicVisualization/GridSizeSelector';
 import { useContentNavigation } from '@/hooks/useContentNavigation';
 
 interface MusicPanelProps {
@@ -24,39 +24,14 @@ interface MusicPanelProps {
 
 export default function MusicPanel({ isActive = false }: MusicPanelProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<LastfmPeriod>('1month');
+  const [gridSize, setGridSize] = useState<GridSizeOption>('auto');
   const { nowPlaying } = useRecentTracks();
   const { artists, loading: artistsLoading } = useTopArtists(selectedPeriod, 50);
   const { tracks: lovedTracks, loading: lovedLoading } = useLovedTracks(6);
-  const { genres, loading: genresLoading } = useGenreAnalysis(selectedPeriod);
+  const { albums, loading: albumsLoading } = useTopAlbumsWithArtwork(selectedPeriod, 25);
   
   const { containerRef } = useContentNavigation({ isActive });
 
-  // Pre-warm cache for adjacent periods
-  useEffect(() => {
-    const periods: LastfmPeriod[] = ['7day', '1month', '3month'];
-    periods.forEach(period => {
-      if (period !== selectedPeriod) {
-        const cacheKey = `lastfm-genres-${period}`;
-        const cached = localStorage.getItem(cacheKey);
-        if (!cached) {
-          // Pre-fetch in background with low priority
-          setTimeout(() => {
-            fetch(`/api/lastfm/genre-analysis?period=${period}`)
-              .then(res => res.json())
-              .then(data => {
-                if (data.genres) {
-                  localStorage.setItem(cacheKey, JSON.stringify({
-                    data: data.genres,
-                    timestamp: Date.now()
-                  }));
-                }
-              })
-              .catch(() => {});
-          }, 5000); // Wait 5 seconds before pre-fetching
-        }
-      }
-    });
-  }, [selectedPeriod]);
 
 
   return (
@@ -77,6 +52,32 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
       />
 
       <div className="space-y-6">
+        {/* Top Albums Grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="bg-game-dark rounded-lg border border-game-border p-6"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <Album className="w-6 h-6 text-game-green" />
+              <h3 className="font-orbitron font-bold text-xl text-white">Top Albums</h3>
+            </div>
+            <GridSizeSelector 
+              selectedSize={gridSize} 
+              onSizeChange={setGridSize}
+            />
+          </div>
+
+          <AlbumGrid 
+            albums={albums}
+            loading={albumsLoading}
+            gridSize={gridSize}
+            maxAlbums={gridSize === 'fixed-3x3' ? 9 : gridSize === 'fixed-5x5' ? 25 : undefined}
+          />
+        </motion.div>
+
         {/* Now Playing - Compact */}
         {nowPlaying && (
           <motion.div
@@ -88,60 +89,12 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
           </motion.div>
         )}
 
-        {/* Genre Distribution */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-game-dark rounded-lg border border-game-border p-6"
-        >
-          <div className="flex items-center gap-3 mb-6">
-            <Tag className="w-6 h-6 text-game-green" />
-            <h3 className="font-orbitron font-bold text-xl text-white">Genre Distribution</h3>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {genresLoading && genres.length === 0 ? (
-              <motion.div
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <GenreChartSkeleton />
-              </motion.div>
-            ) : genres.length > 0 ? (
-              <motion.div
-                key="chart"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-              >
-                <GenreDonutChart genres={genres} artists={artists} maxGenres={8} />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="error"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="text-game-text"
-              >
-                <p>Genre analysis temporarily unavailable</p>
-                <p className="text-xs mt-2 text-game-text/60">Try selecting a different time period or refresh in a few minutes</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
 
         {/* Top Artists with Period Selector */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.2 }}
           className="bg-game-dark rounded-lg border border-game-border p-6"
         >
           <div className="flex items-center gap-3 mb-6">

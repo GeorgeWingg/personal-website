@@ -2,6 +2,7 @@ import {
   LastfmRecentTracksResponse,
   LastfmTopArtistsResponse,
   LastfmTopTracksResponse,
+  LastfmTopAlbumsResponse,
   LastfmPeriod,
   LastfmError,
   LastfmUserInfo,
@@ -89,6 +90,18 @@ class LastfmClient {
   ): Promise<LastfmTopTracksResponse> {
     return this.request<LastfmTopTracksResponse>({
       method: 'user.gettoptracks',
+      user: this.username,
+      period,
+      limit: limit.toString(),
+    });
+  }
+
+  async getTopAlbums(
+    period: LastfmPeriod = '1month',
+    limit: number = 12
+  ): Promise<LastfmTopAlbumsResponse> {
+    return this.request<LastfmTopAlbumsResponse>({
+      method: 'user.gettopalbums',
       user: this.username,
       period,
       limit: limit.toString(),

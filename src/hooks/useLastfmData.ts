@@ -15,6 +15,7 @@ import {
   LastfmUserTopTagsResponse,
   LastfmTag
 } from '@/types/lastfm';
+import { AlbumWithArtwork } from '@/app/api/lastfm/albums-with-artwork/route';
 
 interface UseRecentTracksResult {
   tracks: LastfmTrack[];
@@ -377,4 +378,89 @@ export function useGenreAnalysis(period: LastfmPeriod): UseGenreAnalysisResult {
   }, [period]);
 
   return { genres, loading, error };
+}
+
+interface UseTopAlbumsWithArtworkResult {
+  albums: AlbumWithArtwork[];
+  loading: boolean;
+  error: Error | null;
+}
+
+export function useTopAlbumsWithArtwork(period: LastfmPeriod, limit: number = 25): UseTopAlbumsWithArtworkResult {
+  const [albums, setAlbums] = useState<AlbumWithArtwork[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const cacheKey = `lastfm-albums-artwork-${period}-${limit}`;
+    const cacheExpiry = 60 * 60 * 1000; // 1 hour in milliseconds
+
+    const fetchAlbums = async () => {
+      try {
+        // Check cache first
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          const age = Date.now() - timestamp;
+          
+          if (age < cacheExpiry) {
+            // Use cached data
+            setAlbums(data);
+            setLoading(false);
+            
+            // Optionally fetch fresh data in background if cache is getting stale
+            if (age > cacheExpiry / 2) { // If older than 30 minutes
+              fetch(`/api/lastfm/albums-with-artwork?period=${period}&limit=${limit}`)
+                .then(res => res.json())
+                .then(freshData => {
+                  if (freshData.albums) {
+                    localStorage.setItem(cacheKey, JSON.stringify({
+                      data: freshData.albums,
+                      timestamp: Date.now()
+                    }));
+                    setAlbums(freshData.albums);
+                  }
+                })
+                .catch(() => {}); // Silently fail background update
+            }
+            return;
+          }
+        }
+
+        // No cache or expired, fetch fresh data
+        setLoading(true);
+        const response = await fetch(`/api/lastfm/albums-with-artwork?period=${period}&limit=${limit}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch albums with artwork');
+        }
+        
+        const data = await response.json();
+        const albumsData = data.albums || [];
+        
+        // Cache the result
+        localStorage.setItem(cacheKey, JSON.stringify({
+          data: albumsData,
+          timestamp: Date.now()
+        }));
+        
+        setAlbums(albumsData);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Unknown error'));
+        
+        // Try to use stale cache on error
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          const { data } = JSON.parse(cached);
+          setAlbums(data);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAlbums();
+  }, [period, limit]);
+
+  return { albums, loading, error };
 }
