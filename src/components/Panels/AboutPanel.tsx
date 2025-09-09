@@ -16,15 +16,16 @@ const interests: Interest[] = [
   // Core tech/AI interests (Green)
   { name: 'AI Agents', theme: 'tech' },
   { name: 'AGI / ASI', theme: 'tech' },
-  { name: 'Quant Trading', theme: 'tech' },
+  { name: 'Interfaces for Long-term Planning', theme: 'tech' },
   { name: 'Intelligence Amplification', theme: 'tech' },
   { name: 'Human-AI Collaboration', theme: 'tech' },
   { name: 'Reinforcement Learning', theme: 'tech' },
   { name: 'DevTools', theme: 'tech' },
   { name: 'Generative Interfaces', theme: 'tech' },
+  { name: 'Brain Computer Interfaces', theme: 'tech' },
   
   // Creative/personal interests (Blue)
-  { name: 'Music Discovery', theme: 'creative' },
+  { name: 'Live Music', theme: 'creative' },
   { name: 'Underground Rap', theme: 'creative' },
   { name: 'Japanese Fashion', theme: 'creative' },
   { name: 'Retro Game UI', theme: 'creative' },
@@ -35,7 +36,7 @@ const interests: Interest[] = [
   // Business/strategic interests (Purple)
   { name: 'Goal Trees', theme: 'niche' },
   { name: 'Product Design', theme: 'niche' },
-  { name: 'Secondhand Market Arbitrage', theme: 'niche' },
+  { name: 'Secondhand Market Arbitrage (lowballing on Vinted)', theme: 'niche' },
   { name: 'Startup Building', theme: 'niche' },
   { name: 'Personal Leverage', theme: 'niche' },
   { name: 'Structured Planning', theme: 'niche' },
