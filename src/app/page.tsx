@@ -11,6 +11,7 @@ import ProjectsPanel from '@/components/Panels/ProjectsPanel';
 import NowPanel from '@/components/Panels/NowPanel';
 import MusicPanel from '@/components/Panels/MusicPanel';
 import ContactPanel from '@/components/Panels/ContactPanel';
+import BlogPanel from '@/components/Panels/BlogPanel';
 
 type FocusArea = 'menu' | 'content';
 
@@ -24,7 +25,7 @@ export default function Home() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1) as MenuOption;
-      if (hash && ['about', 'projects', 'now', 'music', 'contact'].includes(hash)) {
+      if (hash && ['about', 'projects', 'now', 'music', 'blog', 'contact'].includes(hash)) {
         setActiveOption(hash);
       }
     };
@@ -49,6 +50,8 @@ export default function Home() {
         return <NowPanel />;
       case 'music':
         return <MusicPanel isActive={isContentActive} />;
+      case 'blog':
+        return <BlogPanel isActive={isContentActive} />;
       case 'contact':
         return <ContactPanel isActive={isContentActive} />;
       default:

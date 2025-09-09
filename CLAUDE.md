@@ -71,9 +71,13 @@ All Last.fm data fetched through server-side routes:
 LASTFM_API_KEY=your_key
 LASTFM_SHARED_SECRET=your_secret
 LASTFM_USERNAME=GeorgeWing
+# Substack base URL (no trailing slash)
+SUBSTACK_URL=https://yourname.substack.com
 ```
 
 ## Recent Changes
+- Added Blog panel with Substack RSS preview
+- New `/api/substack` route; set `SUBSTACK_URL`
 - Switched from bar chart to donut chart for genres
 - Fixed tooltip to appear outside donut
 - Added top genre display in center

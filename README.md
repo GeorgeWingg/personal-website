@@ -64,6 +64,9 @@ Required environment variables:
 LASTFM_API_KEY=your_lastfm_api_key
 LASTFM_SHARED_SECRET=your_lastfm_secret
 LASTFM_USERNAME=GeorgeWing
+# Substack base URL (no trailing slash), e.g. https://yourname.substack.com
+SUBSTACK_URL=
+NEXT_PUBLIC_SUBSTACK_URL=
 ```
 
 ## 🚀 Deployment

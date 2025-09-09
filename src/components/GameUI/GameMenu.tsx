@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 
-export type MenuOption = 'about' | 'projects' | 'now' | 'music' | 'contact';
+export type MenuOption = 'about' | 'projects' | 'now' | 'music' | 'blog' | 'contact';
 
 interface GameMenuProps {
   activeOption: MenuOption;
@@ -22,6 +22,7 @@ const menuItems: MenuItem[] = [
   { id: 'projects', label: 'PROJECTS', description: 'What I\'m building' },
   { id: 'now', label: 'NOW', description: 'Current focus' },
   { id: 'music', label: 'MUSIC', description: 'What I\'m listening to' },
+  { id: 'blog', label: 'BLOG', description: 'Substack + recent posts' },
   { id: 'contact', label: 'CONTACT', description: 'Get in touch' },
 ];
 

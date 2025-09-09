@@ -23,7 +23,14 @@ body {
 
 /* Custom scrollbar styles */
 .custom-scrollbar {
+  /* Firefox */
   scrollbar-width: thin;
+  /* Use neutral thumb by default to avoid always-on neon in Firefox */
+  scrollbar-color: #333333 #1A1A1A; /* thumb track */
+}
+
+/* Firefox hover state */
+.custom-scrollbar:hover {
   scrollbar-color: #8CFF8C #1A1A1A;
 }
 
@@ -43,7 +50,7 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #8CFF8C;
+  background: #8CFF8C; /* Blink/WebKit hover to match Firefox hover */
 }
 
 /* Global selection styles */
