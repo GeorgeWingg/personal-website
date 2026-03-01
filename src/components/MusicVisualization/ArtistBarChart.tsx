@@ -28,14 +28,14 @@ export default function ArtistBarChart({ artists, maxArtists = 10 }: ArtistBarCh
           >
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono text-game-green/60 w-6">
+                <span className="text-xs font-mono text-cyber-blue/60 w-6">
                   #{index + 1}
                 </span>
                 <a
                   href={artist.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center gap-1.5 text-white font-medium hover:text-game-green transition-colors duration-200 truncate max-w-[200px]"
+                  className="group flex items-center gap-1.5 text-white font-medium hover:text-cyber-blue transition-colors duration-200 truncate max-w-[200px]"
                   aria-label={`View ${artist.name} on Last.fm`}
                 >
                   <span className="truncate">
@@ -47,14 +47,14 @@ export default function ArtistBarChart({ artists, maxArtists = 10 }: ArtistBarCh
                   />
                 </a>
               </div>
-              <span className="text-sm text-game-text ml-2">
+              <span className="text-sm text-terminal-text ml-2">
                 {artist.playcount} plays
               </span>
             </div>
             
-            <div className="relative h-6 bg-game-dark rounded overflow-hidden">
+            <div className="relative h-6 bg-white/5 rounded-sm overflow-hidden border border-white/5">
               <motion.div
-                className="absolute inset-y-0 left-0 bg-gradient-to-r from-game-green/80 to-game-green/40 rounded"
+                className="absolute inset-y-0 left-0 bg-gradient-to-r from-cyber-blue/80 to-cyber-purple/60 rounded-sm shadow-[0_0_10px_rgba(0,240,255,0.2)]"
                 initial={{ width: 0 }}
                 animate={{ width: `${percentage}%` }}
                 transition={{ 
@@ -63,7 +63,7 @@ export default function ArtistBarChart({ artists, maxArtists = 10 }: ArtistBarCh
                   ease: [0.16, 1, 0.3, 1]
                 }}
               >
-                <div className="absolute inset-0 bg-game-gloss opacity-30" />
+                <div className="absolute inset-0 bg-white/10 opacity-30" />
               </motion.div>
             </div>
           </motion.div>

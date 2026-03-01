@@ -53,7 +53,7 @@ export default function AboutPanel({ isActive = false }: AboutPanelProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="font-orbitron font-bold text-2xl md:text-3xl mb-6 md:mb-8 text-game-green"
+        className="font-orbitron font-bold text-2xl md:text-3xl mb-6 md:mb-8 text-cyber-blue drop-shadow-[0_0_10px_rgba(0,240,255,0.6)]"
       >
         ABOUT
       </motion.h2>
@@ -80,21 +80,23 @@ export default function AboutPanel({ isActive = false }: AboutPanelProps) {
           Currently in London, but also spending time in San Francisco and the Isle of Man.
         </p>
         
-        <div className="mt-6 md:mt-8 p-4 md:p-6 bg-game-dark rounded-lg border border-game-border">
-          <h3 className="font-orbitron font-bold text-sm text-game-green mb-6">INTERESTS</h3>
+        <div className="mt-6 md:mt-8 p-4 md:p-6 bg-black/30 backdrop-blur-sm rounded-lg border border-terminal-border/50 shadow-inner">
+          <h3 className="font-orbitron font-bold text-sm text-cyber-blue mb-6 drop-shadow-[0_0_5px_rgba(0,240,255,0.8)]">
+            INTERESTS
+          </h3>
           
           <div className="flex flex-wrap gap-2">
             {interests.map((interest, index) => {
               const getThemeStyles = (theme: string) => {
                 switch (theme) {
                   case 'tech':
-                    return 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30 hover:border-emerald-500/60 hover:shadow-[0_0_15px_rgba(16,185,129,0.4)]';
+                    return 'bg-cyber-blue/10 border border-cyber-blue/40 text-cyber-blue hover:bg-cyber-blue/20 hover:border-cyber-blue/80 hover:shadow-[0_0_15px_rgba(0,240,255,0.4)]';
                   case 'creative':
-                    return 'bg-blue-500/20 border border-blue-500/40 text-blue-400 hover:bg-blue-500/30 hover:border-blue-500/60 hover:shadow-[0_0_15px_rgba(59,130,246,0.4)]';
+                    return 'bg-cyber-pink/10 border border-cyber-pink/40 text-cyber-pink hover:bg-cyber-pink/20 hover:border-cyber-pink/80 hover:shadow-[0_0_15px_rgba(255,0,85,0.4)]';
                   case 'niche':
-                    return 'bg-purple-500/20 border border-purple-500/40 text-purple-400 hover:bg-purple-500/30 hover:border-purple-500/60 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]';
+                    return 'bg-cyber-purple/10 border border-cyber-purple/40 text-cyber-purple hover:bg-cyber-purple/20 hover:border-cyber-purple/80 hover:shadow-[0_0_15px_rgba(189,0,255,0.4)]';
                   default:
-                    return 'bg-game-panel border border-game-border text-game-text hover:bg-game-border hover:border-game-text/50';
+                    return 'bg-black/40 border border-terminal-border text-terminal-text hover:bg-white/10 hover:border-white/50';
                 }
               };
 
@@ -109,7 +111,7 @@ export default function AboutPanel({ isActive = false }: AboutPanelProps) {
                   }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`px-3 py-1.5 rounded-full text-sm transition-all duration-200 game-focus ${getThemeStyles(interest.theme)}`}
+                  className={`px-3 py-1.5 rounded-sm text-sm transition-all duration-200 game-focus ${getThemeStyles(interest.theme)}`}
                   tabIndex={0}
                   onClick={() => {
                     // Future functionality placeholder

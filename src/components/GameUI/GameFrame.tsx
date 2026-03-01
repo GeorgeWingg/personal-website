@@ -8,39 +8,61 @@ interface GameFrameProps {
 
 export default function GameFrame({ children }: GameFrameProps) {
   return (
-    <div className="min-h-screen bg-game-black flex items-center justify-center p-2 md:p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-0 md:p-8 font-mono overflow-hidden relative">
+      {/* Ambient Background Glow */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,rgba(0,240,255,0.03),transparent_70%)]" />
+      
+      {/* Animated Grid Background */}
+      <div className="absolute inset-0 animated-grid opacity-20 pointer-events-none" />
+
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative w-full max-w-7xl h-[95vh] md:h-[90vh] max-h-[900px]"
+        transition={{ duration: 0.5, ease: "circOut" }}
+        className="relative w-full max-w-7xl h-[100vh] md:h-[90vh] max-h-[900px] flex flex-col border border-terminal-border/50 bg-black/80 backdrop-blur-sm shadow-neon-blue z-10 overflow-hidden rounded-sm"
       >
-        {/* Outer bezel */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-2xl" />
-        
-        {/* Inner bezel with metallic effect */}
-        <div className="absolute inset-2 bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl">
-          <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent rounded-xl" />
-        </div>
-        
-        {/* Main content area */}
-        <div className="absolute inset-4 bg-game-dark rounded-lg shadow-game-depth overflow-hidden flex flex-col">
-          {/* Title bar */}
-          <div className="h-12 bg-game-panel border-b border-game-border flex items-center px-4 md:px-6 flex-shrink-0">
-            <h1 className="font-orbitron font-bold text-lg md:text-xl tracking-wider text-game-green">
-              GEORGE WING
-            </h1>
-            <div className="ml-auto flex gap-1 md:gap-2">
-              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-game-red animate-pulse" />
-              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-yellow-500" />
-              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-game-green" />
-            </div>
+        {/* CRT Scanline Overlay */}
+        <div className="absolute inset-0 pointer-events-none scanlines opacity-20 z-50" />
+
+        {/* System Header */}
+        <div className="h-10 bg-black/90 border-b border-terminal-border/50 flex items-center px-4 justify-between flex-shrink-0 text-xs tracking-widest uppercase text-terminal-text select-none z-20">
+          <div className="flex items-center gap-4">
+            <span className="text-cyber-blue font-bold drop-shadow-[0_0_5px_rgba(0,240,255,0.8)]">GW.SYS.V3</span>
+            <span className="hidden md:inline text-terminal-border">|</span>
+            <span className="hidden md:inline text-white/80">ROOT_ACCESS: <span className="text-green-400">GRANTED</span></span>
           </div>
           
-          {/* Content container */}
-          <div className="flex-1 min-h-0">
-            {children}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-cyber-blue animate-blink shadow-[0_0_8px_#00f0ff]" />
+              <span className="text-cyber-blue">ONLINE</span>
+            </div>
+            <span className="hidden md:inline text-terminal-border">|</span>
+            <span className="hidden md:inline">MEM: 128TB</span>
           </div>
+        </div>
+        
+        {/* Main viewport */}
+        <div className="flex-1 relative overflow-hidden">
+           {/* Inner Grid */}
+           <div className="absolute inset-0 pointer-events-none bg-terminal-grid-pattern opacity-[0.05]" />
+           
+           {/* Content */}
+           <div className="relative h-full z-10 flex flex-col">
+              {children}
+           </div>
+        </div>
+
+        {/* Bottom Status Bar */}
+        <div className="h-8 border-t border-terminal-border/50 bg-black/90 flex items-center px-4 justify-between text-[10px] text-terminal-text uppercase tracking-wider z-20">
+           <span className="flex items-center gap-2">
+              <span className="text-cyber-purple">➜</span>
+              /USR/JUNO/WORKSPACE
+           </span>
+           <span className="flex items-center gap-2">
+              READY
+              <div className="w-2 h-4 bg-cyber-blue/20 animate-pulse" />
+           </span>
         </div>
       </motion.div>
     </div>

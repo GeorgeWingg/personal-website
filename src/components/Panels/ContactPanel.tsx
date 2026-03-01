@@ -57,7 +57,7 @@ export default function ContactPanel({ isActive = false }: ContactPanelProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="font-orbitron font-bold text-3xl mb-8 text-game-green"
+        className="font-orbitron font-bold text-3xl mb-8 text-cyber-blue drop-shadow-[0_0_10px_rgba(0,240,255,0.6)]"
       >
         CONTACT
       </motion.h2>
@@ -68,12 +68,14 @@ export default function ContactPanel({ isActive = false }: ContactPanelProps) {
         transition={{ delay: 0.2 }}
         className="space-y-6"
       >
-        <div className="p-6 bg-game-dark rounded-lg border border-game-border">
+        <div className="p-6 bg-black/30 backdrop-blur-sm rounded-sm border border-terminal-border/50 shadow-inner">
           <div className="flex items-center gap-3 mb-4">
-            <MessageSquare className="w-6 h-6 text-game-green" />
-            <h3 className="font-orbitron font-bold text-xl text-white">Get In Touch</h3>
+            <MessageSquare className="w-6 h-6 text-cyber-blue drop-shadow-[0_0_5px_rgba(0,240,255,0.8)]" />
+            <h3 className="font-orbitron font-bold text-xl text-white">
+              Get In Touch
+            </h3>
           </div>
-          <p className="text-game-text">
+          <p className="text-terminal-text leading-relaxed">
             Open to interesting conversations and collaborations. Not currently looking for 
             traditional employment, but always happy to chat about AI, product ideas, or 
             anything else that sparks curiosity.
@@ -92,28 +94,31 @@ export default function ContactPanel({ isActive = false }: ContactPanelProps) {
               transition={{ delay: 0.3 + index * 0.1 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="group"
+              className="group block relative overflow-hidden rounded-sm"
             >
-              <div className="p-4 bg-game-panel-gradient rounded-lg border border-game-border hover:border-game-green/50 hover:shadow-game-glow transition-all duration-300">
+              <div className="p-4 bg-black/40 backdrop-blur-sm border border-terminal-border/50 hover:border-cyber-blue/60 hover:shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-all duration-300 relative z-10">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-game-dark rounded-lg flex items-center justify-center text-game-green group-hover:bg-game-green group-hover:text-game-black transition-all">
+                    <div className="w-12 h-12 bg-black/60 rounded-sm flex items-center justify-center text-cyber-blue border border-terminal-border/30 group-hover:border-cyber-blue group-hover:shadow-[inset_0_0_10px_rgba(0,240,255,0.2)] transition-all">
                       {method.icon}
                     </div>
                     <div>
-                      <p className="font-orbitron font-bold text-sm text-game-text">
+                      <p className="font-orbitron font-bold text-sm text-terminal-text group-hover:text-white transition-colors">
                         {method.label}
                       </p>
-                      <p className="text-white group-hover:text-game-green transition-colors">
+                      <p className="text-white group-hover:text-cyber-blue group-hover:drop-shadow-[0_0_5px_rgba(0,240,255,0.8)] transition-all">
                         {method.value}
                       </p>
                     </div>
                   </div>
-                  <div className="text-game-text group-hover:text-game-green transition-colors">
+                  <div className="text-terminal-text group-hover:text-cyber-blue group-hover:translate-x-1 transition-all">
                     →
                   </div>
                 </div>
               </div>
+              
+              {/* Hover Background Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-cyber-blue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
             </motion.a>
           ))}
         </div>

@@ -46,7 +46,7 @@ export default function NowPanel() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="font-orbitron font-bold text-3xl mb-8 text-game-green"
+        className="font-orbitron font-bold text-3xl mb-8 text-cyber-blue drop-shadow-[0_0_10px_rgba(0,240,255,0.6)]"
       >
         NOW
       </motion.h2>
@@ -55,7 +55,7 @@ export default function NowPanel() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="text-lg text-game-text mb-8"
+        className="text-lg text-terminal-text mb-8"
       >
         What I&apos;m focused on at this point in my life.
       </motion.p>
@@ -72,20 +72,20 @@ export default function NowPanel() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 + index * 0.1 }}
-            className="p-4 bg-game-dark rounded-lg border border-game-border"
+            className="p-4 bg-black/30 backdrop-blur-sm rounded-sm border border-terminal-border/50 shadow-inner hover:border-cyber-blue/40 hover:shadow-[0_0_15px_rgba(0,240,255,0.15)] transition-all duration-300 group"
           >
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-game-panel rounded-lg flex items-center justify-center text-game-green">
+              <div className="w-10 h-10 bg-black/60 rounded-sm border border-terminal-border/30 flex items-center justify-center text-cyber-blue group-hover:text-white group-hover:shadow-[0_0_10px_rgba(0,240,255,0.4)] transition-all">
                 {section.icon}
               </div>
-              <h3 className="font-orbitron font-bold text-lg text-white">
+              <h3 className="font-orbitron font-bold text-lg text-white group-hover:text-cyber-blue transition-colors">
                 {section.category}
               </h3>
             </div>
             <ul className="space-y-2">
               {section.items.map((item) => (
-                <li key={typeof item === 'string' ? item : item.text} className="text-game-text flex items-start">
-                  <span className="text-game-green mr-2">▸</span>
+                <li key={typeof item === 'string' ? item : item.text} className="text-terminal-text flex items-start">
+                  <span className="text-cyber-blue mr-2">▸</span>
                   {typeof item === 'string' ? (
                     item
                   ) : (
@@ -93,7 +93,7 @@ export default function NowPanel() {
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center gap-1.5 hover:text-game-green transition-colors duration-200"
+                      className="group flex items-center gap-1.5 hover:text-cyber-blue transition-colors duration-200"
                     >
                       {item.text}
                       <ExternalLink 
@@ -109,13 +109,13 @@ export default function NowPanel() {
             {/* GPU Richness Scale for Compute section */}
             {section.isCompute && (
               <div className="mt-4 space-y-2">
-                <div className="flex justify-between text-xs text-game-text">
+                <div className="flex justify-between text-xs text-terminal-text/70 font-mono uppercase">
                   <span>GPU Poor</span>
                   <span>GPU Rich (8× H100)</span>
                 </div>
-                <div className="relative h-3 bg-game-dark rounded-full border border-game-border overflow-hidden">
+                <div className="relative h-3 bg-black/60 rounded-sm border border-terminal-border/50 overflow-hidden">
                   <motion.div
-                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-red-500/80 to-orange-400/60 rounded-full"
+                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-cyber-pink/80 to-cyber-purple/60"
                     initial={{ width: 0 }}
                     animate={{ width: '8%' }}
                     transition={{ 
@@ -124,11 +124,10 @@ export default function NowPanel() {
                       ease: [0.16, 1, 0.3, 1]
                     }}
                   />
-                  <div className="absolute inset-0 bg-game-gloss opacity-20 rounded-full" />
                 </div>
-                <div className="text-xs text-orange-400 font-mono space-y-1">
+                <div className="text-xs text-cyber-pink font-mono space-y-1">
                   <div>8% of H100 cluster (536 TFLOPS)</div>
-                  <div className="text-game-text">41.32 / 536 TFLOPS</div>
+                  <div className="text-terminal-text">41.32 / 536 TFLOPS</div>
                 </div>
               </div>
             )}
@@ -140,9 +139,9 @@ export default function NowPanel() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7 }}
-        className="mt-8 p-4 bg-game-panel/50 rounded-lg border border-game-border"
+        className="mt-8 p-4 bg-black/20 rounded-sm border border-terminal-border/30"
       >
-        <p className="text-sm text-game-text italic">
+        <p className="text-sm text-terminal-text/50 italic">
           Last updated: {new Date().toLocaleDateString('en-GB', { 
             year: 'numeric', 
             month: 'long', 

@@ -102,11 +102,11 @@ export default function Home() {
     <GameFrame>
       <div className="h-full flex flex-col">
         {/* Mobile menu button */}
-        <div className="md:hidden flex items-center justify-between p-4 bg-game-panel border-b border-game-border">
+        <div className="md:hidden flex items-center justify-between p-4 bg-black/60 backdrop-blur-md border-b border-terminal-border/50">
           <h2 className="font-orbitron font-bold text-lg text-white">MENU</h2>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-lg bg-game-dark border border-game-border hover:border-game-green transition-colors"
+            className="p-2 rounded-sm bg-black/40 border border-terminal-border hover:border-cyber-blue hover:text-cyber-blue transition-colors"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -118,7 +118,7 @@ export default function Home() {
           {/* Mobile menu overlay */}
           {mobileMenuOpen && (
             <div 
-              className="md:hidden absolute inset-0 bg-black/30 backdrop-blur-sm z-40"
+              className="md:hidden absolute inset-0 bg-black/60 backdrop-blur-sm z-40"
               onClick={() => setMobileMenuOpen(false)}
             />
           )}
@@ -132,7 +132,7 @@ export default function Home() {
             min-w-[250px] h-full 
             transition-all duration-300 ease-in-out
             z-50 md:z-auto
-            ${focusArea === 'menu' ? 'ring-2 ring-white/20 ring-inset' : ''}
+            ${focusArea === 'menu' ? 'ring-1 ring-cyber-blue/30 ring-inset' : ''}
           `}>
             <GameMenu 
               activeOption={activeOption} 
@@ -146,9 +146,9 @@ export default function Home() {
             ref={contentRef}
             className={`
               flex-1 h-full 
-              p-4 md:p-6 
+              p-0 md:p-0
               overflow-y-auto transition-all 
-              ${focusArea === 'content' ? 'ring-2 ring-white/20 ring-inset' : ''}
+              ${focusArea === 'content' ? 'ring-1 ring-cyber-blue/30 ring-inset' : ''}
             `}
           >
             <ContentPanel isActive={true}>

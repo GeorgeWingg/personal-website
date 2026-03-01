@@ -23,14 +23,14 @@ export default function TimePeriodSelector({ selectedPeriod, onPeriodChange }: T
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-game-dark/50 backdrop-blur-sm rounded-lg border border-game-border p-4 mb-6"
+      className="bg-black/30 backdrop-blur-sm rounded-sm border border-terminal-border/50 p-4 mb-6 shadow-inner"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Calendar className="w-5 h-5 text-game-green" />
+          <Calendar className="w-5 h-5 text-cyber-blue drop-shadow-[0_0_5px_rgba(0,240,255,0.6)]" />
           <div>
             <h4 className="font-orbitron text-sm font-bold text-white">Time Period</h4>
-            <p className="text-xs text-game-text">
+            <p className="text-xs text-terminal-text">
               {periods.find(p => p.value === selectedPeriod)?.description}
             </p>
           </div>
@@ -46,10 +46,10 @@ export default function TimePeriodSelector({ selectedPeriod, onPeriodChange }: T
                 onClick={() => onPeriodChange(period.value)}
                 className={`
                   relative px-3 sm:px-4 py-2 text-xs font-orbitron font-bold tracking-wider
-                  transition-all duration-200 rounded-md game-focus whitespace-nowrap flex-shrink-0
+                  transition-all duration-200 rounded-sm game-focus whitespace-nowrap flex-shrink-0
                   ${isActive 
-                    ? 'text-white' 
-                    : 'text-game-text hover:text-white hover:bg-game-border'
+                    ? 'text-white drop-shadow-[0_0_5px_rgba(0,240,255,0.6)]' 
+                    : 'text-terminal-text hover:text-cyber-blue hover:bg-white/5'
                   }
                 `}
                 whileHover={{ scale: 1.05 }}
@@ -60,7 +60,7 @@ export default function TimePeriodSelector({ selectedPeriod, onPeriodChange }: T
                 {isActive && (
                   <motion.div
                     layoutId="period-selector"
-                    className="absolute inset-0 bg-game-green/20 border border-game-green/40 rounded-md"
+                    className="absolute inset-0 bg-cyber-blue/20 border border-cyber-blue/40 rounded-sm shadow-[0_0_10px_rgba(0,240,255,0.2)]"
                     transition={{ 
                       type: "spring",
                       stiffness: 300,

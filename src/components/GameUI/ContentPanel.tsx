@@ -13,21 +13,18 @@ export default function ContentPanel({ children, isActive }: ContentPanelProps) 
       {isActive && (
         <motion.div
           key="content"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -10 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           transition={{ 
-            duration: 0.3,
-            ease: [0.4, 0, 0.2, 1]
+            duration: 0.15, // Faster transition
+            ease: "linear" 
           }}
-          className="h-full w-full"
+          className="h-full w-full bg-transparent relative"
         >
-          <div className="h-full bg-game-panel-gradient rounded-lg border border-game-border shadow-game-panel relative overflow-hidden">
-            {/* Gloss overlay */}
-            <div className="absolute inset-0 bg-game-gloss pointer-events-none" />
-            
-            {/* Content container with scrolling */}
-            <div className="relative h-full overflow-y-auto custom-scrollbar p-4 md:p-8">
+          {/* Content container with scrolling */}
+          <div className="h-full overflow-y-auto custom-scrollbar p-6 md:p-12">
+            <div className="max-w-4xl mx-auto">
               {children}
             </div>
           </div>

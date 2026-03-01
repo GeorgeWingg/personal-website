@@ -40,7 +40,7 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="font-orbitron font-bold text-3xl mb-6 text-game-green"
+        className="font-orbitron font-bold text-3xl mb-6 text-cyber-blue drop-shadow-[0_0_10px_rgba(0,240,255,0.6)]"
       >
         MUSIC STATS
       </motion.h2>
@@ -57,12 +57,17 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="bg-game-dark rounded-lg border border-game-border p-6"
+          className="bg-black/30 backdrop-blur-sm rounded-sm border border-terminal-border/50 p-6 shadow-inner relative overflow-hidden"
         >
-          <div className="flex items-center justify-between mb-6">
+          {/* Decorative corner */}
+          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-cyber-blue/10 to-transparent pointer-events-none" />
+
+          <div className="flex items-center justify-between mb-6 relative z-10">
             <div className="flex items-center gap-3">
-              <Album className="w-6 h-6 text-game-green" />
-              <h3 className="font-orbitron font-bold text-xl text-white">Top Albums</h3>
+              <Album className="w-6 h-6 text-cyber-blue" />
+              <h3 className="font-orbitron font-bold text-xl text-white">
+                Top Albums
+              </h3>
             </div>
             <GridSizeSelector 
               selectedSize={gridSize} 
@@ -95,19 +100,21 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-game-dark rounded-lg border border-game-border p-6"
+          className="bg-black/30 backdrop-blur-sm rounded-sm border border-terminal-border/50 p-6 shadow-inner"
         >
           <div className="flex items-center gap-3 mb-6">
-            <BarChart3 className="w-6 h-6 text-game-green" />
-            <h3 className="font-orbitron font-bold text-xl text-white">Top Artists</h3>
+            <BarChart3 className="w-6 h-6 text-cyber-blue" />
+            <h3 className="font-orbitron font-bold text-xl text-white">
+              Top Artists
+            </h3>
           </div>
 
           {artistsLoading ? (
-            <div className="text-game-text">Loading artists...</div>
+            <div className="text-terminal-text">Loading artists...</div>
           ) : artists.length > 0 ? (
             <ArtistBarChart artists={artists} maxArtists={10} />
           ) : (
-            <div className="text-game-text">No data for this period</div>
+            <div className="text-terminal-text">No data for this period</div>
           )}
         </motion.div>
 
@@ -117,11 +124,13 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-game-dark rounded-lg border border-game-border p-6"
+            className="bg-black/30 backdrop-blur-sm rounded-sm border border-terminal-border/50 p-6 shadow-inner"
           >
             <div className="flex items-center gap-3 mb-4">
-              <Heart className="w-6 h-6 text-red-400" />
-              <h3 className="font-orbitron font-bold text-xl text-white">Recent Loves</h3>
+              <Heart className="w-6 h-6 text-cyber-pink drop-shadow-[0_0_5px_rgba(255,0,85,0.6)]" />
+              <h3 className="font-orbitron font-bold text-xl text-white">
+                Recent Loves
+              </h3>
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -131,12 +140,13 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4 + index * 0.05 }}
-                  className="bg-game-panel rounded-lg p-3 border border-game-border hover:border-red-400/30 transition-all group"
+                  className="bg-black/40 rounded-sm p-3 border border-terminal-border/50 hover:border-cyber-pink/40 hover:shadow-[0_0_10px_rgba(255,0,85,0.1)] transition-all group relative overflow-hidden"
                 >
-                  <p className="text-sm font-medium text-white truncate group-hover:text-red-400 transition-colors">
+                  <div className="absolute inset-0 bg-cyber-pink/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <p className="text-sm font-medium text-white truncate group-hover:text-cyber-pink transition-colors relative z-10">
                     {track.name}
                   </p>
-                  <p className="text-xs text-game-text truncate">
+                  <p className="text-xs text-terminal-text truncate relative z-10">
                     {track.artist.name}
                   </p>
                 </motion.div>
@@ -150,7 +160,7 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-game-dark rounded-lg border border-game-border p-6 hover:border-game-green/50 transition-all cursor-pointer group game-focus"
+          className="bg-black/30 backdrop-blur-sm rounded-sm border border-terminal-border/50 p-6 hover:border-cyber-blue/60 hover:shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-all cursor-pointer group game-focus relative overflow-hidden"
           onClick={() => window.open('https://www.last.fm/user/GeorgeWing', '_blank')}
           tabIndex={0}
           role="link"
@@ -161,9 +171,10 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
             }
           }}
         >
-          <div className="flex items-center justify-between">
+           <div className="absolute inset-0 bg-gradient-to-r from-cyber-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="flex items-center justify-between relative z-10">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-game-border flex-shrink-0">
+              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-terminal-border group-hover:border-cyber-blue transition-colors flex-shrink-0">
                 <Image 
                   src="/profile-avatar-hd.jpg" 
                   alt="George Wing" 
@@ -174,15 +185,15 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
                 />
               </div>
               <div>
-                <h3 className="font-orbitron font-bold text-xl text-white group-hover:text-game-green transition-colors">
+                <h3 className="font-orbitron font-bold text-xl text-white group-hover:text-cyber-blue transition-colors">
                   View Full Profile
                 </h3>
-                <p className="text-sm text-game-text">
+                <p className="text-sm text-terminal-text group-hover:text-white/80">
                   @GeorgeWing on Last.fm
                 </p>
               </div>
             </div>
-            <ExternalLink className="w-5 h-5 text-game-text group-hover:text-game-green transition-colors" />
+            <ExternalLink className="w-5 h-5 text-terminal-text group-hover:text-cyber-blue transition-colors" />
           </div>
         </motion.div>
       </div>

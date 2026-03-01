@@ -18,7 +18,7 @@ export default function ProjectsPanel({ isActive = false }: ProjectsPanelProps) 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="font-orbitron font-bold text-3xl mb-8 text-game-green"
+        className="font-orbitron font-bold text-3xl mb-8 text-cyber-blue drop-shadow-[0_0_10px_rgba(0,240,255,0.6)]"
       >
         PROJECTS
       </motion.h2>

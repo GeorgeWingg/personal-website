@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 
 export type MenuOption = 'about' | 'projects' | 'now' | 'music' | 'blog' | 'contact';
@@ -15,15 +14,16 @@ interface MenuItem {
   id: MenuOption;
   label: string;
   description: string;
+  index: string;
 }
 
 const menuItems: MenuItem[] = [
-  { id: 'about', label: 'ABOUT', description: 'Who I am' },
-  { id: 'projects', label: 'PROJECTS', description: 'What I\'m building' },
-  { id: 'now', label: 'NOW', description: 'Current focus' },
-  { id: 'music', label: 'MUSIC', description: 'What I\'m listening to' },
-  { id: 'blog', label: 'BLOG', description: 'Substack + recent posts' },
-  { id: 'contact', label: 'CONTACT', description: 'Get in touch' },
+  { id: 'about', label: 'ABOUT', description: 'IDENTITY_CORE', index: '01' },
+  { id: 'projects', label: 'PROJECTS', description: 'BUILD_LOGS', index: '02' },
+  { id: 'now', label: 'NOW', description: 'CURRENT_STATUS', index: '03' },
+  { id: 'music', label: 'MUSIC', description: 'AUDIO_DATA', index: '04' },
+  { id: 'blog', label: 'BLOG', description: 'TRANSMISSIONS', index: '05' },
+  { id: 'contact', label: 'CONTACT', description: 'COMM_LINK', index: '06' },
 ];
 
 export default function GameMenu({ activeOption, onSelectOption, isFocused = true }: GameMenuProps) {
@@ -41,16 +41,16 @@ export default function GameMenu({ activeOption, onSelectOption, isFocused = tru
       const navHeight = nav.clientHeight;
       
       if (buttonTop < navScrollTop) {
-        nav.scrollTo({ top: buttonTop - 20, behavior: 'smooth' });
+        nav.scrollTo({ top: buttonTop, behavior: 'smooth' });
       } else if (buttonBottom > navScrollTop + navHeight) {
-        nav.scrollTo({ top: buttonBottom - navHeight + 20, behavior: 'smooth' });
+        nav.scrollTo({ top: buttonBottom - navHeight, behavior: 'smooth' });
       }
     }
   }, [activeOption]);
 
   // Keyboard navigation
   useEffect(() => {
-    if (!isFocused) return; // Only handle keyboard when menu is focused
+    if (!isFocused) return;
     
     const handleKeyDown = (e: KeyboardEvent) => {
       const currentIndex = menuItems.findIndex(item => item.id === activeOption);
@@ -71,51 +71,57 @@ export default function GameMenu({ activeOption, onSelectOption, isFocused = tru
   }, [activeOption, onSelectOption, isFocused]);
 
   return (
-    <div className="w-full h-full bg-game-panel border-r border-game-border flex flex-col">
+    <div className="w-full h-full bg-black/20 backdrop-blur-md border-r border-terminal-border/50 flex flex-col font-jetbrains">
       {/* Fixed header */}
-      <div className="px-6 pt-6 pb-2">
-        <h2 className="font-orbitron font-bold text-sm text-game-text tracking-wider">
-          MAIN MENU
+      <div className="px-6 py-4 border-b border-terminal-border/50 bg-black/40">
+        <h2 className="text-[10px] tracking-widest text-terminal-text/80 uppercase flex items-center gap-2">
+           <span className="w-2 h-2 bg-terminal-border rounded-full"></span>
+           Index // Navigation
         </h2>
       </div>
       
-      {/* Scrollable navigation */}
-      <nav ref={navRef} className="flex-1 overflow-y-auto custom-scrollbar px-6 pb-6 min-h-0">
-        <div className="space-y-2 pb-20 md:pb-4">
+      {/* Navigation */}
+      <nav ref={navRef} className="flex-1 overflow-y-auto custom-scrollbar min-h-0 py-4">
+        <div className="space-y-1">
           {menuItems.map((item) => {
             const isActive = activeOption === item.id;
             
             return (
-              <motion.button
+              <button
                 key={item.id}
                 ref={isActive ? activeButtonRef : null}
                 onClick={() => onSelectOption(item.id)}
-                className="relative w-full text-left p-4 rounded-lg transition-all duration-200"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className={`group relative w-full text-left px-6 py-4 transition-all duration-200 ease-out overflow-hidden ${
+                  isActive 
+                    ? 'bg-cyber-blue/10 border-r-2 border-cyber-blue' 
+                    : 'text-terminal-text hover:text-white hover:bg-white/5'
+                }`}
               >
-                {/* Animated selection background */}
-                {isActive && (
-                  <motion.div
-                    layoutId="menu-selector"
-                    className="absolute inset-0 bg-game-dark border-2 border-white rounded-lg shadow-lg"
-                    transition={{ 
-                      duration: 0.3, 
-                      ease: [0.25, 0.46, 0.45, 0.94] 
-                    }}
-                  />
-                )}
-                
-                {/* Content */}
-                <div className="relative z-10">
-                  <h3 className="font-orbitron font-bold text-lg mb-1 transition-colors text-white">
-                    {item.label}
-                  </h3>
-                  <p className="text-sm transition-colors text-game-text">
-                    {item.description}
-                  </p>
+                 {/* Hover Glow Effect */}
+                 <div className={`absolute inset-0 bg-gradient-to-r from-cyber-blue/0 to-cyber-blue/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`} />
+
+                <div className="flex items-baseline justify-between relative z-10">
+                  <div className="flex items-center gap-4">
+                     <span className={`text-xs font-mono transition-colors ${isActive ? 'text-cyber-blue' : 'text-terminal-border group-hover:text-white/50'}`}>
+                        {item.index}
+                     </span>
+                     <h3 className={`font-bold text-lg tracking-tight uppercase transition-all ${isActive ? 'text-white drop-shadow-[0_0_5px_rgba(0,240,255,0.8)] translate-x-2' : 'group-hover:translate-x-1'}`}>
+                        {item.label}
+                     </h3>
+                  </div>
+                  
+                  {isActive && (
+                     <span className="animate-pulse text-cyber-blue drop-shadow-[0_0_5px_#00f0ff]">
+                        ●
+                     </span>
+                  )}
                 </div>
-              </motion.button>
+                <p className={`text-[10px] mt-1 uppercase tracking-widest ml-9 transition-colors ${
+                   isActive ? 'text-cyber-blue/70' : 'text-terminal-border group-hover:text-white/40'
+                }`}>
+                  {item.description}
+                </p>
+              </button>
             );
           })}
         </div>
