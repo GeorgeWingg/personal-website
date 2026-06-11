@@ -42,7 +42,7 @@ export default function BlogPanel({ isActive = false }: BlogPanelProps) {
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch('/api/substack?limit=5', { cache: 'no-store' });
+        const res = await fetch('/api/substack?limit=5');
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || 'Failed to load feed');
         if (mounted) {

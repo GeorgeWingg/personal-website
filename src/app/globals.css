@@ -1,9 +1,6 @@
 @import "tailwindcss";
 
-:root {
-  --font-orbitron: var(--font-orbitron);
-  --font-jetbrains: var(--font-jetbrains);
-}
+/* --font-orbitron / --font-jetbrains are defined by next/font on the body */
 
 html {
   scroll-behavior: smooth;

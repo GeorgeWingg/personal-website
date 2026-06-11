@@ -11,6 +11,10 @@ interface NowItem {
   isCompute?: boolean;
 }
 
+// Bump this whenever the content below changes — rendering new Date() here
+// would claim the page is always fresh, which defeats the point of a now page
+const LAST_UPDATED = '9 July 2025';
+
 const nowData: NowItem[] = [
   {
     category: 'Building',
@@ -143,11 +147,7 @@ export default function NowPanel() {
         className="mt-8 p-4 bg-game-panel/50 rounded-lg border border-game-border"
       >
         <p className="text-sm text-game-text italic">
-          Last updated: {new Date().toLocaleDateString('en-GB', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          })}
+          Last updated: {LAST_UPDATED}
         </p>
       </motion.div>
     </div>

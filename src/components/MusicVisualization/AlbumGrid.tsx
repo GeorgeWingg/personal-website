@@ -24,8 +24,6 @@ function AlbumCard({ album, index, onClick }: AlbumCardProps) {
   const [imageError, setImageError] = useState(false);
   
   const handleImageError = () => {
-    console.log(`Image failed for ${album.name} by ${album.artist}`);
-    
     // Don't retry 404s, just show fallback immediately
     setImageError(true);
   };

@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import Parser from 'rss-parser';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 1800; // cache 30 minutes
 export const runtime = 'nodejs';
 
 type FeedItem = {
@@ -17,9 +15,13 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const limit = Math.max(1, Math.min(20, Number(url.searchParams.get('limit')) || 5));
 
-    // Allow NEXT_PUBLIC_ fallback and optional query override for local testing
     const fromEnv = (process.env.SUBSTACK_URL || process.env.NEXT_PUBLIC_SUBSTACK_URL || '').replace(/\/$/, '');
-    const fromQuery = (url.searchParams.get('baseUrl') || '').replace(/\/$/, '');
+    // The ?baseUrl= override is a dev-only convenience; in production it would
+    // let anyone use this route to make the server fetch arbitrary URLs (SSRF)
+    const fromQuery =
+      process.env.NODE_ENV !== 'production'
+        ? (url.searchParams.get('baseUrl') || '').replace(/\/$/, '')
+        : '';
     const baseUrl = fromQuery || fromEnv;
     if (!baseUrl) {
       return NextResponse.json(
@@ -35,7 +37,13 @@ export async function GET(request: Request) {
       },
     });
 
-    const feed = await parser.parseURL(feedUrl);
+    // Fetch through Next's data cache (30 min) instead of parser.parseURL,
+    // which uses its own HTTP client and re-downloads the feed every request
+    const feedResponse = await fetch(feedUrl, { next: { revalidate: 1800 } });
+    if (!feedResponse.ok) {
+      throw new Error(`Feed request failed: ${feedResponse.status}`);
+    }
+    const feed = await parser.parseString(await feedResponse.text());
 
     const items = (feed.items || [])
       .slice(0, limit)

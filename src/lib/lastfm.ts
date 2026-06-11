@@ -1,17 +1,10 @@
 import {
   LastfmRecentTracksResponse,
   LastfmTopArtistsResponse,
-  LastfmTopTracksResponse,
   LastfmTopAlbumsResponse,
   LastfmPeriod,
   LastfmError,
-  LastfmUserInfo,
-  LastfmWeeklyChartListResponse,
-  LastfmWeeklyArtistChartResponse,
-  LastfmWeeklyTrackChartResponse,
   LastfmLovedTracksResponse,
-  LastfmUserTopTagsResponse,
-  LastfmArtistTopTagsResponse,
 } from '@/types/lastfm';
 
 const BASE_URL = 'https://ws.audioscrobbler.com/2.0/';
@@ -84,18 +77,6 @@ class LastfmClient {
     });
   }
 
-  async getTopTracks(
-    period: LastfmPeriod = '1month',
-    limit: number = 10
-  ): Promise<LastfmTopTracksResponse> {
-    return this.request<LastfmTopTracksResponse>({
-      method: 'user.gettoptracks',
-      user: this.username,
-      period,
-      limit: limit.toString(),
-    });
-  }
-
   async getTopAlbums(
     period: LastfmPeriod = '1month',
     limit: number = 12
@@ -108,60 +89,6 @@ class LastfmClient {
     });
   }
 
-  // Helper to get currently playing track
-  async getNowPlaying() {
-    const response = await this.getRecentTracks(1);
-    const track = response.recenttracks.track[0];
-    
-    if (track?.['@attr']?.nowplaying === 'true') {
-      return track;
-    }
-    
-    return null;
-  }
-
-  // Get user info
-  async getUserInfo(): Promise<LastfmUserInfo> {
-    return this.request<LastfmUserInfo>({
-      method: 'user.getinfo',
-      user: this.username,
-    });
-  }
-
-  // Get weekly chart list (available time periods)
-  async getWeeklyChartList(): Promise<LastfmWeeklyChartListResponse> {
-    return this.request<LastfmWeeklyChartListResponse>({
-      method: 'user.getweeklychartlist',
-      user: this.username,
-    });
-  }
-
-  // Get weekly artist chart
-  async getWeeklyArtistChart(from?: string, to?: string): Promise<LastfmWeeklyArtistChartResponse> {
-    const params: Record<string, string> = {
-      method: 'user.getweeklyartistchart',
-      user: this.username,
-    };
-    
-    if (from) params.from = from;
-    if (to) params.to = to;
-    
-    return this.request<LastfmWeeklyArtistChartResponse>(params);
-  }
-
-  // Get weekly track chart
-  async getWeeklyTrackChart(from?: string, to?: string): Promise<LastfmWeeklyTrackChartResponse> {
-    const params: Record<string, string> = {
-      method: 'user.getweeklytrackchart',
-      user: this.username,
-    };
-    
-    if (from) params.from = from;
-    if (to) params.to = to;
-    
-    return this.request<LastfmWeeklyTrackChartResponse>(params);
-  }
-
   // Get loved tracks
   async getLovedTracks(limit: number = 50, page: number = 1): Promise<LastfmLovedTracksResponse> {
     return this.request<LastfmLovedTracksResponse>({
@@ -169,23 +96,6 @@ class LastfmClient {
       user: this.username,
       limit: limit.toString(),
       page: page.toString(),
-    });
-  }
-
-  // Get user's top tags
-  async getUserTopTags(limit: number = 50): Promise<LastfmUserTopTagsResponse> {
-    return this.request<LastfmUserTopTagsResponse>({
-      method: 'user.gettoptags',
-      user: this.username,
-      limit: limit.toString(),
-    });
-  }
-
-  // Get artist's top tags
-  async getArtistTopTags(artist: string): Promise<LastfmArtistTopTagsResponse> {
-    return this.request<LastfmArtistTopTagsResponse>({
-      method: 'artist.gettoptags',
-      artist: artist,
     });
   }
 

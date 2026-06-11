@@ -15,16 +15,23 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
+// app/icon.png and app/apple-icon.png are served automatically by Next's
+// metadata file conventions, so no manual icons entry is needed here
 export const metadata: Metadata = {
   title: "George Wing",
   description: "Building AI agents, goal trees, and thinking about the future",
-  icons: {
-    icon: [
-      { url: '/icon.png', sizes: '32x32', type: 'image/png' },
-      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
-    ],
-    apple: '/apple-icon.png',
+  openGraph: {
+    title: "George Wing",
+    description: "Building AI agents, goal trees, and thinking about the future",
+    type: "website",
+    images: ["/profile-avatar-hd.jpg"],
+  },
+  twitter: {
+    card: "summary",
+    title: "George Wing",
+    description: "Building AI agents, goal trees, and thinking about the future",
+    images: ["/profile-avatar-hd.jpg"],
+    creator: "@george__wing",
   },
 };
 

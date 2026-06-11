@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, MotionConfig } from 'framer-motion';
 
 interface GameFrameProps {
   children: React.ReactNode;
@@ -8,6 +8,9 @@ interface GameFrameProps {
 
 export default function GameFrame({ children }: GameFrameProps) {
   return (
+    // reducedMotion="user" disables all framer-motion transforms for visitors
+    // with prefers-reduced-motion set, across every panel rendered inside
+    <MotionConfig reducedMotion="user">
     <div className="min-h-screen bg-game-black flex items-center justify-center p-2 md:p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -44,5 +47,6 @@ export default function GameFrame({ children }: GameFrameProps) {
         </div>
       </motion.div>
     </div>
+    </MotionConfig>
   );
 }

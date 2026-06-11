@@ -36,7 +36,7 @@ export default function NowPlayingCompact({ track }: NowPlayingCompactProps) {
               {track.name}
             </p>
             <p className="text-xs text-game-text truncate">
-              {track.artist['#text']} • {track.album['#text']}
+              {track.artist.name || track.artist['#text']} • {track.album['#text']}
             </p>
           </div>
         </div>

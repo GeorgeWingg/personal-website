@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import { shouldIgnoreKeyboardEvent } from '@/lib/keyboard';
 
 export type MenuOption = 'about' | 'projects' | 'now' | 'music' | 'blog' | 'contact';
 
@@ -53,6 +54,8 @@ export default function GameMenu({ activeOption, onSelectOption, isFocused = tru
     if (!isFocused) return; // Only handle keyboard when menu is focused
     
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (shouldIgnoreKeyboardEvent(e)) return;
+
       const currentIndex = menuItems.findIndex(item => item.id === activeOption);
       
       if (e.key === 'ArrowDown' || e.key === 's') {

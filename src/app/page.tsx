@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
+import { shouldIgnoreKeyboardEvent } from '@/lib/keyboard';
 import GameFrame from '@/components/GameUI/GameFrame';
 import GameMenu, { MenuOption } from '@/components/GameUI/GameMenu';
 import ContentPanel from '@/components/GameUI/ContentPanel';
@@ -69,6 +70,8 @@ export default function Home() {
   // Global keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (shouldIgnoreKeyboardEvent(e)) return;
+
       // Arrow Left/Right to switch focus areas
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
@@ -87,16 +90,21 @@ export default function Home() {
         }
       }
       
-      // Handle Escape to return to menu
-      if (e.key === 'Escape' && focusArea === 'content') {
-        e.preventDefault();
-        setFocusArea('menu');
+      // Handle Escape: close the mobile menu first, otherwise return to menu
+      if (e.key === 'Escape') {
+        if (mobileMenuOpen) {
+          e.preventDefault();
+          setMobileMenuOpen(false);
+        } else if (focusArea === 'content') {
+          e.preventDefault();
+          setFocusArea('menu');
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [focusArea]);
+  }, [focusArea, mobileMenuOpen]);
 
   return (
     <GameFrame>

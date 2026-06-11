@@ -99,25 +99,21 @@ export default function AboutPanel({ isActive = false }: AboutPanelProps) {
               };
 
               return (
-                <motion.button
+                // Decorative tags, not buttons — they have no action, so they
+                // shouldn't be focusable or announced as interactive
+                <motion.span
                   key={interest.name}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ 
+                  transition={{
                     delay: 0.4 + index * 0.03,
-                    duration: 0.3 
+                    duration: 0.3
                   }}
                   whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`px-3 py-1.5 rounded-full text-sm transition-all duration-200 game-focus ${getThemeStyles(interest.theme)}`}
-                  tabIndex={0}
-                  onClick={() => {
-                    // Future functionality placeholder
-                    console.log(`Clicked: ${interest.name}`);
-                  }}
+                  className={`px-3 py-1.5 rounded-full text-sm transition-all duration-200 ${getThemeStyles(interest.theme)}`}
                 >
                   {interest.name}
-                </motion.button>
+                </motion.span>
               );
             })}
           </div>

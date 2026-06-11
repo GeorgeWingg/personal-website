@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
+import { shouldIgnoreKeyboardEvent } from '@/lib/keyboard';
 
 interface UseContentNavigationProps {
   isActive: boolean;
@@ -33,6 +34,8 @@ export function useContentNavigation({ isActive, onNavigate }: UseContentNavigat
     if (!isActive) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (shouldIgnoreKeyboardEvent(e)) return;
+
       const elements = getFocusableElements();
       if (elements.length === 0) return;
 

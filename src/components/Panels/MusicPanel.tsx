@@ -25,8 +25,9 @@ interface MusicPanelProps {
 export default function MusicPanel({ isActive = false }: MusicPanelProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<LastfmPeriod>('1month');
   const [gridSize, setGridSize] = useState<GridSizeOption>('auto');
-  const { nowPlaying } = useRecentTracks();
-  const { artists, loading: artistsLoading } = useTopArtists(selectedPeriod, 50);
+  // Only the now-playing chip is rendered from this hook, so keep the poll tiny
+  const { nowPlaying } = useRecentTracks(5);
+  const { artists, loading: artistsLoading } = useTopArtists(selectedPeriod, 10);
   const { tracks: lovedTracks, loading: lovedLoading } = useLovedTracks(6);
   const { albums, loading: albumsLoading } = useTopAlbumsWithArtwork(selectedPeriod, 25);
   
