@@ -46,10 +46,22 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
         MUSIC STATS
       </motion.h2>
 
+      {/* Now Playing - live status, so it leads the panel */}
+      {nowPlaying && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="mb-6"
+        >
+          <NowPlayingCompact track={nowPlaying} />
+        </motion.div>
+      )}
+
       {/* Unified Time Period Selector */}
-      <TimePeriodSelector 
-        selectedPeriod={selectedPeriod} 
-        onPeriodChange={setSelectedPeriod} 
+      <TimePeriodSelector
+        selectedPeriod={selectedPeriod}
+        onPeriodChange={setSelectedPeriod}
       />
 
       <div className="space-y-6">
@@ -78,18 +90,6 @@ export default function MusicPanel({ isActive = false }: MusicPanelProps) {
             maxAlbums={gridSize === 'fixed-3x3' ? 9 : gridSize === 'fixed-5x5' ? 25 : undefined}
           />
         </motion.div>
-
-        {/* Now Playing - Compact */}
-        {nowPlaying && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.15 }}
-          >
-            <NowPlayingCompact track={nowPlaying} />
-          </motion.div>
-        )}
-
 
         {/* Top Artists with Period Selector */}
         <motion.div
